@@ -1,0 +1,24 @@
+# Environment variables & secrets
+.env
+*.env
+!.env.example
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Large CSV data files (if keeping repo lightweight)
+# Comment out if you want raw CSVs committed
+# *.csv
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+.venv/
+env/

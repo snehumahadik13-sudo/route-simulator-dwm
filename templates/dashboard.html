@@ -1,0 +1,3397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Route Intelligence Warehouse | DWM Dashboard</title>
+<meta name="description" content="Emergency Route Intelligence — Historical Data Warehouse & Decision Support System. Traffic, Accidents, Weather, EMS, Hospital Readiness.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══════════════════════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">🚑</div>
+    <div class="sidebar-logo-text">
+      <div class="sidebar-logo-title">Emergency Route Intelligence</div>
+      <div class="sidebar-logo-sub">Command Center · DWM</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Analytics</div>
+    <button class="nav-item active" id="nav-overview" onclick="showPage('overview', this)">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Overview</span>
+    </button>
+    <button class="nav-item" id="nav-traffic" onclick="showPage('traffic', this)">
+      <span class="nav-icon">🚦</span>
+      <span class="nav-label">Traffic Analysis</span>
+    </button>
+    <button class="nav-item" id="nav-accidents" onclick="showPage('accidents', this)">
+      <span class="nav-icon">⚠️</span>
+      <span class="nav-label">Accident Analysis</span>
+    </button>
+    <button class="nav-item" id="nav-weather" onclick="showPage('weather', this)">
+      <span class="nav-icon">🌦️</span>
+      <span class="nav-label">Weather Analysis</span>
+    </button>
+    <button class="nav-item" id="nav-emergencies" onclick="showPage('emergencies', this)">
+      <span class="nav-icon">🚑</span>
+      <span class="nav-label">Emergency / EMS</span>
+    </button>
+
+    <div class="nav-section-label" style="margin-top:0.5rem">Intelligence</div>
+    <button class="nav-item" id="nav-routes" onclick="showPage('routes', this)">
+      <span class="nav-icon">🛣️</span>
+      <span class="nav-label">Route Intelligence</span>
+    </button>
+    <button class="nav-item" id="nav-hospitals" onclick="showPage('hospitals', this)">
+      <span class="nav-icon">🏥</span>
+      <span class="nav-label">Hospital Readiness</span>
+    </button>
+    <button class="nav-item" id="nav-simulator" onclick="showPage('simulator', this)">
+      <span class="nav-icon">🗺️</span>
+      <span class="nav-label">Route Simulator</span>
+    </button>
+
+    <div class="nav-section-label" style="margin-top:0.5rem">Data Warehouse</div>
+    <button class="nav-item" id="nav-warehouse" onclick="showPage('warehouse', this)">
+      <span class="nav-icon">🗄️</span>
+      <span class="nav-label">Schema &amp; OLAP</span>
+    </button>
+    <button class="nav-item" id="nav-olap" onclick="showPage('olap', this)">
+      <span class="nav-icon">🔄</span>
+      <span class="nav-label">OLAP Playground</span>
+      <span class="nav-badge">NEW</span>
+    </button>
+
+    <div class="nav-section-label" style="margin-top:0.5rem">Machine Learning</div>
+    <button class="nav-item" id="nav-ml" onclick="showPage('ml', this)">
+      <span class="nav-icon">🤖</span>
+      <span class="nav-label">ML Analysis</span>
+    </button>
+    <button class="nav-item" id="nav-random_forest" onclick="showPage('random_forest', this)">
+      <span class="nav-icon">🌲</span>
+      <span class="nav-label">Random Forest</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="historical-badge">
+      📋 Historical Analysis — Not Real-Time
+    </div>
+    <div class="db-status" id="db-status">
+      <span class="status-dot"></span> Connecting…
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN CONTENT ══════════════════════════════════════════════════════════ -->
+<div class="main-wrapper">
+
+  <!-- Top Header -->
+  <header class="topbar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
+    <div class="topbar-center">
+      <h1 class="topbar-title gradient-text">Emergency Route Intelligence Command Center</h1>
+      <span class="topbar-sub">Historical Data Warehouse &amp; Decision Support · PostgreSQL/Supabase · Star Schema · DWM Project</span>
+    </div>
+    <div class="topbar-right">
+      <span class="hist-pill">📋 Historical Analysis</span>
+      <span class="topbar-time" id="topbar-clock"></span>
+    </div>
+  </header>
+
+  <main class="content">
+
+<!-- ══════════════════════ PAGE: OVERVIEW ══════════════════════════════════ -->
+<div class="page active" id="page-overview">
+
+  <div class="page-header">
+    <h2 class="page-title">📊 Operations Overview</h2>
+    <p class="page-desc">Key performance indicators across all datasets in the Emergency Route Intelligence Warehouse.</p>
+  </div>
+
+  <!-- KPI Cards Row 1 -->
+  <div class="kpi-grid" id="kpi-grid-overview">
+    <div class="kpi-card" style="--c:#3b82f6">
+      <div class="kpi-icon">🚑</div>
+      <div class="kpi-label">EMS Events</div>
+      <div class="kpi-value" id="kpi-ems">—</div>
+      <div class="kpi-sub">Emergency Dispatches</div>
+    </div>
+    <div class="kpi-card" style="--c:#ef4444">
+      <div class="kpi-icon">💥</div>
+      <div class="kpi-label">Road Accidents</div>
+      <div class="kpi-value" id="kpi-accidents">—</div>
+      <div class="kpi-sub">Verified Incidents</div>
+    </div>
+    <div class="kpi-card" style="--c:#06b6d4">
+      <div class="kpi-icon">🚗</div>
+      <div class="kpi-label">Traffic Records</div>
+      <div class="kpi-value" id="kpi-traffic">—</div>
+      <div class="kpi-sub">VANET Telemetry Pings</div>
+    </div>
+    <div class="kpi-card" style="--c:#8b5cf6">
+      <div class="kpi-icon">🌤️</div>
+      <div class="kpi-label">Weather Records</div>
+      <div class="kpi-value" id="kpi-weather">—</div>
+      <div class="kpi-sub">Daily Observations 2000–2024</div>
+    </div>
+    <div class="kpi-card" style="--c:#10b981">
+      <div class="kpi-icon">🏥</div>
+      <div class="kpi-label">Hospitals</div>
+      <div class="kpi-value" id="kpi-hospitals">—</div>
+      <div class="kpi-sub">PMC + EMS Facilities</div>
+    </div>
+    <div class="kpi-card" style="--c:#f59e0b">
+      <div class="kpi-icon">🛣️</div>
+      <div class="kpi-label">Road Segments</div>
+      <div class="kpi-value" id="kpi-roads">—</div>
+      <div class="kpi-sub">S001–S500 VANET Monitored</div>
+    </div>
+    <div class="kpi-card" style="--c:#ec4899">
+      <div class="kpi-icon">⚡</div>
+      <div class="kpi-label">High-Risk Corridors</div>
+      <div class="kpi-value" id="kpi-highrisk">—</div>
+      <div class="kpi-sub">Above Avg Congestion Pressure</div>
+    </div>
+    <div class="kpi-card" style="--c:#84cc16">
+      <div class="kpi-icon">🏎️</div>
+      <div class="kpi-label">Avg Fleet Speed</div>
+      <div class="kpi-value" id="kpi-speed">— km/h</div>
+      <div class="kpi-sub">Network-Wide Avg Speed</div>
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>📈</span> Accidents by Hour of Day</div>
+      <div class="chart-wrap"><canvas id="ov-hourly"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🌦️</span> Weather Impact on Accidents</div>
+      <div class="chart-wrap"><canvas id="ov-weather"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts Row 2 -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>⚠️</span> Accident Severity Distribution</div>
+      <div class="chart-wrap"><canvas id="ov-severity"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🚦</span> Top 15 High-Congestion Segments</div>
+      <div class="chart-wrap"><canvas id="ov-segments"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Route Intelligence Preview -->
+  <div class="card">
+    <div class="card-title"><span>🛣️</span> Route Intelligence Preview — Top 10 Highest-Risk Corridors</div>
+    <p class="card-note">Based on composite historical traffic congestion, speed, incident rate, and weather factor data.</p>
+    <div id="ov-route-preview"><div class="loading"><div class="spinner"></div>Loading route data…</div></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════ PAGE: TRAFFIC ══════════════════════════════════ -->
+<div class="page" id="page-traffic">
+  <div class="page-header">
+    <h2 class="page-title">🚦 Traffic Analysis</h2>
+    <p class="page-desc">VANET sensor telemetry across 500 road segments — congestion, speed, flow, and wait-time analytics.</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" style="grid-template-columns: repeat(4,1fr)">
+    <div class="kpi-card" style="--c:#06b6d4">
+      <div class="kpi-icon">📡</div><div class="kpi-label">Total Telemetry Pings</div>
+      <div class="kpi-value" id="t-pings">—</div><div class="kpi-sub">VANET Records</div>
+    </div>
+    <div class="kpi-card" style="--c:#10b981">
+      <div class="kpi-icon">🏎️</div><div class="kpi-label">Network Avg Speed</div>
+      <div class="kpi-value" id="t-speed">—</div><div class="kpi-sub">km/h</div>
+    </div>
+    <div class="kpi-card" style="--c:#f59e0b">
+      <div class="kpi-icon">⏱️</div><div class="kpi-label">Avg Wait Time</div>
+      <div class="kpi-value" id="t-wait">—</div><div class="kpi-sub">Seconds per vehicle</div>
+    </div>
+    <div class="kpi-card" style="--c:#ef4444">
+      <div class="kpi-icon">🔴</div><div class="kpi-label">Gridlock Events</div>
+      <div class="kpi-value" id="t-gridlock">—</div><div class="kpi-sub">Across all segments</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>🕐</span> Hourly Traffic Pattern</div>
+      <div class="chart-wrap"><canvas id="t-hourly"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🎯</span> Congestion Label Distribution</div>
+      <div class="chart-wrap"><canvas id="t-congestion-labels"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>🏎️</span> Speed Distribution Buckets</div>
+      <div class="chart-wrap"><canvas id="t-speed-dist"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>📉</span> Avg Speed by Hour</div>
+      <div class="chart-wrap"><canvas id="t-hourly-speed"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🛣️</span> Top 20 High-Congestion Road Segments</div>
+    <div id="t-segments-table"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: ACCIDENTS ════════════════════════════════ -->
+<div class="page" id="page-accidents">
+  <div class="page-header">
+    <h2 class="page-title">⚠️ Accident Analysis</h2>
+    <p class="page-desc">20,000 road accident records across Indian cities — severity, causes, locations, and temporal patterns.</p>
+  </div>
+
+  <div class="kpi-grid" style="grid-template-columns: repeat(4,1fr)">
+    <div class="kpi-card" style="--c:#ef4444">
+      <div class="kpi-icon">💥</div><div class="kpi-label">Total Accidents</div>
+      <div class="kpi-value" id="a-total">—</div><div class="kpi-sub">Verified incidents</div>
+    </div>
+    <div class="kpi-card" style="--c:#7f1d1d">
+      <div class="kpi-icon">💀</div><div class="kpi-label">Fatal Accidents</div>
+      <div class="kpi-value" id="a-fatal">—</div><div class="kpi-sub">Life-loss events</div>
+    </div>
+    <div class="kpi-card" style="--c:#f59e0b">
+      <div class="kpi-icon">🤕</div><div class="kpi-label">Total Casualties</div>
+      <div class="kpi-value" id="a-casualties">—</div><div class="kpi-sub">Persons affected</div>
+    </div>
+    <div class="kpi-card" style="--c:#8b5cf6">
+      <div class="kpi-icon">📊</div><div class="kpi-label">Avg Risk Score</div>
+      <div class="kpi-value" id="a-risk">—</div><div class="kpi-sub">0–10 scale</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>⚠️</span> Accident Severity Distribution</div>
+      <div class="chart-wrap"><canvas id="a-severity"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🕐</span> Accidents by Hour of Day</div>
+      <div class="chart-wrap"><canvas id="a-hourly"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>📍</span> Accidents by Location / City</div>
+      <div class="chart-wrap"><canvas id="a-location"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🛣️</span> Accidents by Road Type</div>
+      <div class="chart-wrap"><canvas id="a-road-type"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>🔍</span> Top Accident Causes</div>
+      <div class="chart-wrap"><canvas id="a-cause"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🌦️</span> Weather vs Accidents</div>
+      <div class="chart-wrap"><canvas id="a-weather"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📋</span> Accident Detail by Severity</div>
+    <div id="a-severity-table"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: WEATHER ══════════════════════════════════ -->
+<div class="page" id="page-weather">
+  <div class="page-header">
+    <h2 class="page-title">🌦️ Weather Analysis</h2>
+    <p class="page-desc">91,320 daily weather observations across Indian cities from 2000–2024. Weather-accident correlations from warehouse.</p>
+  </div>
+
+  <div class="kpi-grid" style="grid-template-columns: repeat(4,1fr)">
+    <div class="kpi-card" style="--c:#06b6d4">
+      <div class="kpi-icon">📅</div><div class="kpi-label">Weather Observations</div>
+      <div class="kpi-value" id="w-obs">—</div><div class="kpi-sub">Daily records 2000–2024</div>
+    </div>
+    <div class="kpi-card" style="--c:#3b82f6">
+      <div class="kpi-icon">🏙️</div><div class="kpi-label">Cities Monitored</div>
+      <div class="kpi-value" id="w-cities">—</div><div class="kpi-sub">Indian cities</div>
+    </div>
+    <div class="kpi-card" style="--c:#f59e0b">
+      <div class="kpi-icon">🌡️</div><div class="kpi-label">Avg Max Temperature</div>
+      <div class="kpi-value" id="w-temp">—°C</div><div class="kpi-sub">Network-wide average</div>
+    </div>
+    <div class="kpi-card" style="--c:#8b5cf6">
+      <div class="kpi-icon">🌧️</div><div class="kpi-label">Avg Precipitation</div>
+      <div class="kpi-value" id="w-precip">— mm</div><div class="kpi-sub">Per observation day</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>☁️</span> Weather Condition Distribution</div>
+      <div class="chart-wrap"><canvas id="w-conditions"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🌧️</span> Precipitation Distribution</div>
+      <div class="chart-wrap"><canvas id="w-precip-dist"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>🌡️</span> Monthly Temperature Trend</div>
+      <div class="chart-wrap"><canvas id="w-temp-trend"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🏙️</span> Weather by City</div>
+      <div class="chart-wrap"><canvas id="w-by-city"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>💥</span> Weather–Accident Correlation Table</div>
+    <p class="card-note">Accidents grouped by weather condition and visibility from warehouse.vw_weather_accident_correlation.</p>
+    <div id="w-accident-table"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: EMERGENCIES ══════════════════════════════ -->
+<div class="page" id="page-emergencies">
+  <div class="page-header">
+    <h2 class="page-title">🚑 Emergency / EMS Analysis</h2>
+    <p class="page-desc">20,000 EMS dispatch records — triage priority, clinical urgency, hourly patterns, and hospital routing.</p>
+  </div>
+
+  <div class="kpi-grid" style="grid-template-columns: repeat(4,1fr)">
+    <div class="kpi-card" style="--c:#ef4444">
+      <div class="kpi-icon">🔴</div><div class="kpi-label">Red (Critical)</div>
+      <div class="kpi-value" id="e-red">—</div><div class="kpi-sub">Immediate triage</div>
+    </div>
+    <div class="kpi-card" style="--c:#f59e0b">
+      <div class="kpi-icon">🟡</div><div class="kpi-label">Yellow (Urgent)</div>
+      <div class="kpi-value" id="e-yellow">—</div><div class="kpi-sub">Urgent triage</div>
+    </div>
+    <div class="kpi-card" style="--c:#10b981">
+      <div class="kpi-icon">🟢</div><div class="kpi-label">Green (Stable)</div>
+      <div class="kpi-value" id="e-green">—</div><div class="kpi-sub">Stable triage</div>
+    </div>
+    <div class="kpi-card" style="--c:#8b5cf6">
+      <div class="kpi-icon">📊</div><div class="kpi-label">Avg Urgency Score</div>
+      <div class="kpi-value" id="e-urgency">—</div><div class="kpi-sub">Clinical instability index</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>🕐</span> EMS Events by Hour of Day</div>
+      <div class="chart-wrap"><canvas id="e-hourly"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>⚡</span> Triage Priority Distribution</div>
+      <div class="chart-wrap"><canvas id="e-triage"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>🏥</span> EMS Dispatch Load by Hospital</div>
+      <div class="chart-wrap"><canvas id="e-hospitals"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🩺</span> Top EMS Medical Conditions</div>
+      <div class="chart-wrap"><canvas id="e-conditions"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>👤</span> Patient Demographics</div>
+      <div class="chart-wrap"><canvas id="e-gender"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>📋</span> Chief Complaints (Top 10)</div>
+      <div class="chart-wrap"><canvas id="e-complaints"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🏥</span> EMS Hospital Dispatch Summary (H001–H004)</div>
+    <div id="e-hospital-table"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: ROUTES ═══════════════════════════════════ -->
+<div class="page" id="page-routes">
+  <div class="page-header">
+    <h2 class="page-title">🛣️ Historical Route Risk Analysis</h2>
+    <p class="page-desc">
+      Composite risk scoring per road segment based on historical warehouse data.
+      <strong>This is not real-time routing</strong> — it is a historical analytical view for decision support.
+    </p>
+  </div>
+
+  <div class="info-banner">
+    <strong>📋 Historical Analysis</strong> — Risk scores derived from 195,714 telemetry records across 500 road segments.
+    Formula: <code>0.40×Congestion + 0.30×Speed Risk + 0.20×Incident Rate + 0.10×Weather Factor</code> (all normalized 0–1).
+    Lower score = historically safer corridor.
+  </div>
+
+  <div class="kpi-grid" style="grid-template-columns: repeat(4,1fr)">
+    <div class="kpi-card" style="--c:#ef4444">
+      <div class="kpi-icon">🔴</div><div class="kpi-label">High-Risk Segments</div>
+      <div class="kpi-value" id="r-highrisk">—</div><div class="kpi-sub">Risk score ≥ 0.7</div>
+    </div>
+    <div class="kpi-card" style="--c:#f59e0b">
+      <div class="kpi-icon">🟡</div><div class="kpi-label">Medium-Risk Segments</div>
+      <div class="kpi-value" id="r-medrisk">—</div><div class="kpi-sub">Risk score 0.4–0.7</div>
+    </div>
+    <div class="kpi-card" style="--c:#10b981">
+      <div class="kpi-icon">🟢</div><div class="kpi-label">Low-Risk Segments</div>
+      <div class="kpi-value" id="r-lowrisk">—</div><div class="kpi-sub">Risk score &lt; 0.4</div>
+    </div>
+    <div class="kpi-card" style="--c:#8b5cf6">
+      <div class="kpi-icon">🔢</div><div class="kpi-label">Total Segments</div>
+      <div class="kpi-value">500</div><div class="kpi-sub">S001–S500</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>📊</span> Risk Score Distribution</div>
+      <div class="chart-wrap"><canvas id="r-risk-dist"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>📍</span> Accident Risk by City/Location</div>
+      <div class="chart-wrap"><canvas id="r-acc-risk"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📋</span> Historical Route Risk Analysis Table</div>
+    <p class="card-note">Ranked by overall risk score (descending). All 500 segments from warehouse.fact_traffic_performance.</p>
+    <div class="filter-row">
+      <input type="text" id="r-search" placeholder="🔍  Filter by segment ID…" oninput="filterRouteTable()">
+      <select id="r-risk-filter" onchange="filterRouteTable()">
+        <option value="">All Risk Levels</option>
+        <option value="high">High Risk (≥0.7)</option>
+        <option value="med">Medium Risk (0.4–0.7)</option>
+        <option value="low">Low Risk (&lt;0.4)</option>
+      </select>
+    </div>
+    <div id="r-table"><div class="loading"><div class="spinner"></div>Loading route risk data…</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: HOSPITALS ════════════════════════════════ -->
+<div class="page" id="page-hospitals">
+  <div class="page-header">
+    <h2 class="page-title">🏥 Hospital Readiness</h2>
+    <p class="page-desc">741 hospitals — 4 EMS destination centers (H001–H004) with dispatch activity, plus 737 PMC infrastructure facilities in Pune.</p>
+  </div>
+
+  <div class="kpi-grid" style="grid-template-columns: repeat(4,1fr)">
+    <div class="kpi-card" style="--c:#10b981">
+      <div class="kpi-icon">🏥</div><div class="kpi-label">Total Facilities</div>
+      <div class="kpi-value" id="h-total">—</div><div class="kpi-sub">EMS + PMC</div>
+    </div>
+    <div class="kpi-card" style="--c:#3b82f6">
+      <div class="kpi-icon">🛏️</div><div class="kpi-label">Total Beds (PMC)</div>
+      <div class="kpi-value" id="h-beds">—</div><div class="kpi-sub">Reported capacity</div>
+    </div>
+    <div class="kpi-card" style="--c:#ef4444">
+      <div class="kpi-icon">🚨</div><div class="kpi-label">Emergency Beds</div>
+      <div class="kpi-value" id="h-emerg-beds">—</div><div class="kpi-sub">Dedicated emergency beds</div>
+    </div>
+    <div class="kpi-card" style="--c:#f59e0b">
+      <div class="kpi-icon">🚑</div><div class="kpi-label">Total Ambulances</div>
+      <div class="kpi-value" id="h-ambulances">—</div><div class="kpi-sub">Fleet size (PMC)</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>📊</span> EMS Dispatch Load per Hospital</div>
+      <div class="chart-wrap"><canvas id="h-dispatch"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🏛️</span> Ownership Distribution (PMC)</div>
+      <div class="chart-wrap"><canvas id="h-ownership"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>🏷️</span> Facility Type Breakdown (Top 15)</div>
+      <div class="chart-wrap"><canvas id="h-types"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🗺️</span> Zone-Wise Facility Distribution</div>
+      <div class="chart-wrap"><canvas id="h-zones"></canvas></div>
+    </div>
+  </div>
+
+  <!-- EMS Hospital Detail -->
+  <div class="card">
+    <div class="card-title"><span>🚑</span> EMS Destination Hospitals (H001–H004) — Dispatch Analytics</div>
+    <div id="h-ems-table"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+
+  <!-- PMC Top Hospitals -->
+  <div class="card">
+    <div class="card-title"><span>🏥</span> Top PMC Facilities by Bed Capacity</div>
+    <div id="h-pmc-table"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: WAREHOUSE ════════════════════════════════ -->
+<div class="page" id="page-warehouse">
+  <div class="page-header">
+    <h2 class="page-title">🗄️ Warehouse & OLAP</h2>
+    <p class="page-desc">Star schema architecture, row counts, and OLAP operation documentation.</p>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>🗄️</span> Staging & Warehouse Row Counts</div>
+      <div id="wh-counts"><div class="loading"><div class="spinner"></div>Loading counts…</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>⭐</span> Star Schema Architecture</div>
+      <div class="schema-desc">
+        <div class="schema-section">
+          <div class="schema-label" style="color:var(--c-cyan)">Dimensions (6)</div>
+          <div class="schema-item">• <code>dim_date</code> — 9,862 dates (2000–2026)</div>
+          <div class="schema-item">• <code>dim_time_of_day</code> — 1,440 minute intervals</div>
+          <div class="schema-item">• <code>dim_location</code> — 18 city/state entries</div>
+          <div class="schema-item">• <code>dim_hospital</code> — 741 (4 EMS + 737 PMC)</div>
+          <div class="schema-item">• <code>dim_road_segment</code> — 500 segments S001–S500</div>
+          <div class="schema-item">• <code>dim_weather_condition</code> — 16 WMO codes</div>
+        </div>
+        <div class="schema-section">
+          <div class="schema-label" style="color:var(--c-orange)">Facts (4)</div>
+          <div class="schema-item">• <code>fact_road_accidents</code> — 20,000 events</div>
+          <div class="schema-item">• <code>fact_ems_events</code> — 20,000 dispatches</div>
+          <div class="schema-item">• <code>fact_daily_weather</code> — 91,320 observations</div>
+          <div class="schema-item">• <code>fact_traffic_performance</code> — 195,714 telemetry pings</div>
+        </div>
+        <div class="schema-section">
+          <div class="schema-label" style="color:var(--c-purple)">Analytical Views (4)</div>
+          <div class="schema-item">• <code>vw_emergency_hospital_readiness</code></div>
+          <div class="schema-item">• <code>vw_high_risk_route_corridors</code></div>
+          <div class="schema-item">• <code>vw_hourly_emergency_risk_profile</code></div>
+          <div class="schema-item">• <code>vw_weather_accident_correlation</code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span>🔄</span> OLAP Operations (sql/06_olap_queries.sql)</div>
+    <div class="grid-2" style="gap:1rem;margin-top:0.5rem">
+      <div class="olap-card">
+        <div class="olap-op">Roll-Up</div>
+        <div class="olap-desc">Hour → Day → Month → Year via GROUP BY ROLLUP on dim_date + dim_time_of_day</div>
+      </div>
+      <div class="olap-card">
+        <div class="olap-op">Drill-Down</div>
+        <div class="olap-desc">State → City → Location via dim_location JOIN on fact_road_accidents</div>
+      </div>
+      <div class="olap-card">
+        <div class="olap-op">Slice</div>
+        <div class="olap-desc">Single dimension filter: rain_intensity &gt; 0 on fact_traffic_performance</div>
+      </div>
+      <div class="olap-card">
+        <div class="olap-op">Dice</div>
+        <div class="olap-desc">Multi-dimension: Weather × Time bucket × Severity × Traffic density</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: ML ═══════════════════════════════════════ -->
+<div class="page" id="page-ml">
+  <div class="page-header">
+    <h2 class="page-title">🤖 ML Analysis Center</h2>
+    <p class="page-desc">Interactive machine learning — K-Means clustering, Random Forest, Apriori association rules, Isolation Forest anomaly detection, and EMS trend analysis. All computed live from warehouse data.</p>
+  </div>
+
+  <!-- ML Tab Selector -->
+  <div class="ml-tabs">
+    <button class="ml-tab-btn active" id="ml-tab-kmeans" onclick="setMlTab('kmeans')">
+      <span class="ml-tab-icon">🔵</span>
+      <span class="ml-tab-name">K-Means</span>
+    </button>
+    <button class="ml-tab-btn" id="ml-tab-classification" onclick="setMlTab('classification')">
+      <span class="ml-tab-icon">🌳</span>
+      <span class="ml-tab-name">Classification</span>
+    </button>
+    <button class="ml-tab-btn" id="ml-tab-apriori" onclick="setMlTab('apriori')">
+      <span class="ml-tab-icon">🔗</span>
+      <span class="ml-tab-name">Apriori</span>
+    </button>
+    <button class="ml-tab-btn" id="ml-tab-anomaly" onclick="setMlTab('anomaly')">
+      <span class="ml-tab-icon">🔍</span>
+      <span class="ml-tab-name">Anomaly</span>
+    </button>
+    <button class="ml-tab-btn" id="ml-tab-trends" onclick="setMlTab('trends')">
+      <span class="ml-tab-icon">📈</span>
+      <span class="ml-tab-name">Trends</span>
+    </button>
+  </div>
+
+  <!-- K-Means Section -->
+  <div class="ml-section active" id="ml-sec-kmeans">
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title"><span>⚙️</span> K-Means Configuration
+        <span style="margin-left:auto;font-size:0.7rem;color:var(--c-muted)">All inputs from warehouse.fact_traffic_performance · S001–S500</span>
+      </div>
+      <div class="sim-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:1rem">
+        <div class="form-group">
+          <label>Number of Clusters (k)</label>
+          <input type="number" id="km-k" value="4" min="2" max="10">
+        </div>
+        <div class="form-group">
+          <label>Features to Use</label>
+          <div class="check-group" id="km-features">
+            <label class="check-item"><input type="checkbox" value="mean_speed" checked> Speed</label>
+            <label class="check-item"><input type="checkbox" value="mean_density" checked> Density</label>
+            <label class="check-item"><input type="checkbox" value="mean_wait" checked> Wait Time</label>
+            <label class="check-item"><input type="checkbox" value="mean_congestion" checked> Congestion</label>
+            <label class="check-item"><input type="checkbox" value="mean_incidents"> Incidents</label>
+            <label class="check-item"><input type="checkbox" value="mean_visibility"> Visibility</label>
+            <label class="check-item"><input type="checkbox" value="mean_rain"> Rain</label>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.75rem;align-items:center">
+        <button class="btn-primary" id="btn-km-run" onclick="runKmeans()">🔵 Run K-Means</button>
+        <div id="km-running" style="display:none" class="loading" style="padding:0"><div class="spinner"></div>Training…</div>
+      </div>
+    </div>
+
+    <div id="km-results" style="display:none">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title"><span>📊</span> Cluster Profiles
+            <span id="km-sil" style="margin-left:auto;font-size:0.74rem;color:var(--c-muted)"></span>
+          </div>
+          <div id="km-cluster-cards"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>📉</span> Elbow Curve (Inertia vs k)</div>
+          <div class="chart-wrap"><canvas id="km-elbow-chart"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>🔵</span> Cluster Distribution Chart</div>
+        <div class="chart-wrap"><canvas id="km-dist-chart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Pre-run results (from ml_results/) -->
+    <div id="km-prerun">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title"><span>🔵</span> K-Means Clustering Results</div>
+          <div id="ml-cluster"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>🌳</span> Accident Severity Classification</div>
+          <div id="ml-class"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Classification Section -->
+  <div class="ml-section" id="ml-sec-classification">
+    <div class="info-banner">Classification uses historical accident data to predict severity. Loaded from pre-run results.
+      Run <code>python -m ml.run_all_ml</code> to regenerate.</div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span>🌳</span> Accident Severity Classifier Metrics</div>
+        <div id="clf-metrics-panel"><div class="loading"><div class="spinner"></div>Loading classification results…</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>📊</span> Feature Importance</div>
+        <div class="chart-wrap"><canvas id="clf-feat-chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Apriori Section -->
+  <div class="ml-section" id="ml-sec-apriori">
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title"><span>⚙️</span> Association Rule Parameters
+        <span style="margin-left:auto;font-size:0.7rem;color:var(--c-muted)">Computed on warehouse.fact_road_accidents</span>
+      </div>
+      <div class="sim-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:1rem">
+        <div class="form-group">
+          <label>Min Support</label>
+          <input type="number" id="apr-support" value="0.05" min="0.01" max="0.5" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Min Confidence</label>
+          <input type="number" id="apr-confidence" value="0.3" min="0.01" max="1.0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Min Lift</label>
+          <input type="number" id="apr-lift" value="1.0" min="0.5" max="10.0" step="0.1">
+        </div>
+      </div>
+      <div style="display:flex;gap:0.75rem;align-items:center">
+        <button class="btn-primary" id="btn-apr-run" onclick="runApriori()">🔗 Mine Rules</button>
+        <div id="apr-running" style="display:none" class="loading" style="padding:0"><div class="spinner"></div>Mining…</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🔗</span> Association Rules Results
+        <span id="apr-rule-count" style="margin-left:auto;font-size:0.72rem;color:var(--c-muted)"></span>
+      </div>
+      <div id="ml-rules"><div class="loading"><div class="spinner"></div>Loading association rules…</div></div>
+    </div>
+  </div>
+
+  <!-- Anomaly Detection Section -->
+  <div class="ml-section" id="ml-sec-anomaly">
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-title"><span>⚙️</span> Isolation Forest Parameters</div>
+      <div class="sim-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:1rem">
+        <div class="form-group">
+          <label>Dataset</label>
+          <select id="anom-dataset">
+            <option value="traffic">Traffic (VANET)</option>
+            <option value="ems">EMS Events</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Contamination Rate</label>
+          <input type="number" id="anom-contamination" value="0.05" min="0.01" max="0.5" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Sample Limit</label>
+          <input type="number" id="anom-limit" value="20000" min="500" max="50000" step="500">
+        </div>
+      </div>
+      <div style="display:flex;gap:0.75rem;align-items:center">
+        <button class="btn-primary" id="btn-anom-run" onclick="runAnomaly()">🔍 Detect Anomalies</button>
+        <div id="anom-running" style="display:none" class="loading" style="padding:0"><div class="spinner"></div>Detecting…</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span>🔍</span> Anomaly Detection Results</div>
+        <div id="ml-anomaly"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>📊</span> Anomaly Score Distribution</div>
+        <div class="chart-wrap"><canvas id="anom-hist-chart"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🚨</span> Top Anomalous Road Segments</div>
+      <div id="anom-segs-chart-wrap">
+        <div class="chart-wrap sm"><canvas id="anom-segs-chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trends Section -->
+  <div class="ml-section" id="ml-sec-trends">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span>📈</span> EMS Dispatch by Hour of Day</div>
+        <div class="chart-wrap tall"><canvas id="ml-ems-trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>📊</span> Accident Trend by Year</div>
+        <div class="chart-wrap tall"><canvas id="ml-acc-trend"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🌦️</span> Weather-Accident Correlation Heatmap</div>
+      <div class="chart-wrap"><canvas id="ml-wx-heatmap"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: RANDOM FOREST ══════════════════════════ -->
+<div class="page" id="page-random_forest">
+  <div class="page-header">
+    <h2 class="page-title">🌲 Random Forest Classification — Delay Risk</h2>
+    <p class="page-desc">Academic historical classification model. Target: <strong>delay_risk</strong> (Low / Medium / High) derived from VANET traffic congestion labels and wait-time thresholds. Distinct from the Accident Severity classifier in ML Analysis.</p>
+  </div>
+
+  <div class="info-banner">
+    <strong>CLASSIFICATION</strong> &nbsp;|&nbsp;
+    Model: RandomForestClassifier (200 trees, max_depth=15, class_weight=balanced)&nbsp;|&nbsp;
+    Target: <code>delay_risk</code> [DERIVED] &nbsp;|&nbsp;
+    Features: traffic telemetry + embedded weather &nbsp;|&nbsp;
+    Run <code>python -m ml.run_all_ml</code> to generate results.
+  </div>
+
+  <!-- KPI Row -->
+  <div class="kpi-grid" id="rf-kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Accuracy</div>
+      <div class="kpi-value" id="rf-accuracy">—</div>
+      <div class="kpi-sub">Test set</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">F1 Score</div>
+      <div class="kpi-value" id="rf-f1">—</div>
+      <div class="kpi-sub">Weighted</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Precision</div>
+      <div class="kpi-value" id="rf-prec">—</div>
+      <div class="kpi-sub">Weighted</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Recall</div>
+      <div class="kpi-value" id="rf-rec">—</div>
+      <div class="kpi-sub">Weighted</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">CV Accuracy</div>
+      <div class="kpi-value" id="rf-cv">—</div>
+      <div class="kpi-sub">5-fold ± std</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Train / Test</div>
+      <div class="kpi-value" id="rf-split">—</div>
+      <div class="kpi-sub">Records</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Feature Importance Chart -->
+    <div class="card">
+      <div class="card-title"><span>📊</span> Feature Importance (Top Features)
+        <span class="badge badge-blue" style="margin-left:auto;font-size:0.72rem">SOURCE-DERIVED</span>
+      </div>
+      <div class="chart-wrap" style="height:280px"><canvas id="rf-feat-chart"></canvas></div>
+      <div style="font-size:0.74rem;color:var(--c-muted);margin-top:0.5rem">
+        Impurity-based importance from 200 trees. Features are traffic telemetry measurements from VANET data.
+      </div>
+    </div>
+
+    <!-- Confusion Matrix -->
+    <div class="card">
+      <div class="card-title"><span>🔲</span> Confusion Matrix
+        <span class="badge badge-yellow" style="margin-left:auto;font-size:0.72rem">TEST SET</span>
+      </div>
+      <div id="rf-cm-wrap" style="overflow-x:auto"><div class="loading"><div class="spinner"></div>Run ML suite first…</div></div>
+      <div class="chart-wrap" style="height:200px;margin-top:0.75rem"><canvas id="rf-cm-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Per-class metrics -->
+  <div class="card">
+    <div class="card-title"><span>📋</span> Per-Class Metrics
+      <span class="badge badge-blue" style="margin-left:auto">Low / Medium / High Delay</span>
+    </div>
+    <div id="rf-perclass"><div class="loading"><div class="spinner"></div>Run ML suite first…</div></div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Prediction Form -->
+    <div class="card">
+      <div class="card-title"><span>🔮</span> Delay Risk Predictor
+        <span class="badge badge-red" style="margin-left:auto;font-size:0.7rem">Academic / Historical</span>
+      </div>
+      <p style="font-size:0.8rem;color:var(--c-muted);margin-bottom:1rem">
+        Enter road-segment conditions and get a predicted delay risk class from the trained Random Forest model.
+        All values must come from actual observed conditions; do not fabricate inputs.
+      </p>
+      <div class="sim-grid">
+        <div class="form-group">
+          <label>Avg Speed (km/h)</label>
+          <input type="number" id="rf-in-speed" value="45" min="0" max="200" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Avg Wait Time (s)</label>
+          <input type="number" id="rf-in-wait" value="55" min="0" max="600" step="1">
+        </div>
+        <div class="form-group">
+          <label>Density (veh/km)</label>
+          <input type="number" id="rf-in-density" value="30" min="0" max="300" step="1">
+        </div>
+        <div class="form-group">
+          <label>Occupancy (%)</label>
+          <input type="number" id="rf-in-occ" value="0.55" min="0" max="1" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Congestion Pressure</label>
+          <input type="number" id="rf-in-cong" value="0.6" min="0" max="1" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Visibility (km)</label>
+          <input type="number" id="rf-in-vis" value="5" min="0" max="20" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>Rain Intensity (mm/h)</label>
+          <input type="number" id="rf-in-rain" value="2" min="0" max="100" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>Hour of Day (0–23)</label>
+          <input type="number" id="rf-in-hour" value="9" min="0" max="23" step="1">
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;align-items:center;margin-top:1rem">
+        <button class="btn-primary" id="btn-rf-predict" onclick="runRFPredict()">🌲 Predict Delay Risk</button>
+        <button class="btn-secondary" onclick="resetRFForm()">Reset</button>
+      </div>
+      <div id="rf-pred-output" style="display:none;margin-top:1.25rem"></div>
+    </div>
+
+    <!-- Route Intelligence Connection -->
+    <div class="card">
+      <div class="card-title"><span>🛣️</span> Connection to Route Intelligence</div>
+      <div style="font-size:0.85rem;line-height:1.7;color:var(--c-text)">
+        <div class="olap-card" style="margin-bottom:1rem">
+          <div class="olap-op" style="font-size:0.9rem">Low Delay Risk</div>
+          <div class="olap-desc">Historical route score: 0.00 – 0.35. Historically free-flowing segments with low congestion pressure and high average speed.</div>
+        </div>
+        <div class="olap-card" style="margin-bottom:1rem;border-color:var(--c-orange)">
+          <div class="olap-op" style="font-size:0.9rem;color:var(--c-orange)">Medium Delay Risk</div>
+          <div class="olap-desc">Historical route score: 0.35 – 0.65. Moderate congestion; travel time moderately impacted.</div>
+        </div>
+        <div class="olap-card" style="margin-bottom:1rem;border-color:var(--c-red)">
+          <div class="olap-op" style="font-size:0.9rem;color:var(--c-red)">High Delay Risk</div>
+          <div class="olap-desc">Historical route score: 0.65 – 1.00. Gridlock/heavy congestion. Emergency response historically delayed on these segments.</div>
+        </div>
+        <div style="background:var(--c-surface2);border-radius:8px;padding:0.9rem;font-size:0.78rem;color:var(--c-muted)">
+          <strong style="color:var(--c-secondary)">Academic Note:</strong><br>
+          The delay_risk target is <strong>DERIVED</strong> from the VANET congestion_label column
+          (Gridlock/Heavy→High, Moderate→Medium, Free-Flow/Light→Low) with avg_wait_time_s
+          fallback thresholds. It is not a ground-truth observation. This model is for
+          academic/educational demonstration of Random Forest classification in a
+          Data Warehouse context. Do not use for real-time emergency dispatching.
+        </div>
+      </div>
+      <div id="rf-route-note" style="display:none;margin-top:1rem"></div>
+    </div>
+  </div>
+
+  <!-- Model Details -->
+  <div class="card">
+    <div class="card-title"><span>⚙️</span> Model Configuration &amp; Methodology</div>
+    <div class="grid-2" style="gap:1.5rem">
+      <div>
+        <div class="wh-row"><span>Algorithm</span><span style="color:var(--c-blue)">RandomForestClassifier (scikit-learn)</span></div>
+        <div class="wh-row"><span>Estimators</span><span>200 decision trees</span></div>
+        <div class="wh-row"><span>Max Depth</span><span>15</span></div>
+        <div class="wh-row"><span>Min Samples Leaf</span><span>5</span></div>
+        <div class="wh-row"><span>Class Weight</span><span>balanced (handles class imbalance)</span></div>
+        <div class="wh-row"><span>Train/Test Split</span><span>80% / 20% stratified (random_state=42)</span></div>
+        <div class="wh-row"><span>Cross-Validation</span><span>5-Fold StratifiedKFold on training set</span></div>
+        <div class="wh-row"><span>Preprocessing</span><span>StandardScaler (fit on train only — no leakage)</span></div>
+      </div>
+      <div>
+        <div class="wh-row"><span>Target Variable</span><span><span class="badge badge-yellow">DERIVED</span> delay_risk</span></div>
+        <div class="wh-row"><span>Target Derivation</span><span style="font-size:0.78rem">congestion_label mapping + wait_time thresholds</span></div>
+        <div class="wh-row"><span>Data Source</span><span>warehouse.fact_traffic_performance (VANET)</span></div>
+        <div class="wh-row"><span>Feature Type</span><span>SOURCE-DERIVED numeric traffic + weather</span></div>
+        <div class="wh-row"><span>Model File</span><span><code>ml_results/rf_delay_model.joblib</code></span></div>
+        <div class="wh-row"><span>Results File</span><span><code>ml_results/rf_delay_results.json</code></span></div>
+        <div class="wh-row"><span>Classification Type</span><span>Multi-class (3 classes)</span></div>
+        <div class="wh-row"><span>Distinct From</span><span style="font-size:0.78rem">classification.py (accident_severity)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ PAGE: SIMULATOR ════════════════════════════════ -->
+<div class="page" id="page-simulator">
+  <div class="page-header">
+    <h2 class="page-title">🗺️ Emergency Route Simulator</h2>
+    <p class="page-desc">Select a source → destination corridor. The system automatically derives road, traffic, and weather context from the historical warehouse. Only emergency severity parameters require manual input.</p>
+  </div>
+
+  <div class="info-banner" style="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(139,92,246,0.08));border-color:rgba(59,130,246,0.3);margin-bottom:1.2rem">
+    📋 <strong>Data Transparency:</strong> Traffic metrics are VANET S001–S500 historical aggregates. Weather from <code>fact_daily_weather</code> (Pune historical). Road names &amp; speed limits are <em>NULL in source schema</em> — not fabricated. Only emergency type/severity require manual input.
+  </div>
+
+  <!-- ── § 1  Route Selection ── -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title"><span>📍</span> § 1 — Route &amp; Hospital Destination Selection
+      <span class="badge badge-blue" style="margin-left:auto;font-size:0.72rem">741+ Hospitals from DB</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto 1.4fr;gap:1rem;align-items:end;margin-bottom:0.75rem">
+      <div class="form-group" style="margin-bottom:0">
+        <label>Source City / Origin</label>
+        <select id="rsim-source" onchange="onRSimRouteChanged()">
+          <option value="Satara" selected>Satara (Primary Corridor)</option>
+          <option value="Mumbai">Mumbai</option>
+          <option value="Nashik">Nashik</option>
+          <option value="Kolhapur">Kolhapur</option>
+          <option value="Solapur">Solapur</option>
+        </select>
+      </div>
+      <div style="font-size:2rem;color:var(--c-cyan);text-align:center;padding-bottom:0.3rem;opacity:0.8">→</div>
+      <div class="form-group" style="margin-bottom:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem">
+          <label style="margin-bottom:0">Destination Hospital / Medical Facility</label>
+          <span id="rsim-dest-count" style="font-size:0.7rem;color:var(--c-cyan);font-weight:600">Loading hospitals…</span>
+        </div>
+        <input type="text" id="rsim-dest-search" placeholder="🔍 Search 741+ hospitals by name, ward, or specialty…" oninput="filterRSimHospitals(this.value)" style="margin-bottom:0.35rem;padding:0.4rem 0.65rem;font-size:0.8rem;border:1px solid var(--c-surface2);border-radius:6px;background:var(--c-surface);color:var(--c-text);width:100%">
+        <select id="rsim-dest" onchange="onRSimRouteChanged()" style="font-size:0.83rem">
+          <!-- Populated dynamically via initRSimHospitals() from /api/destination_hospitals -->
+          <optgroup label="🚨 Major EMS Centers (H001–H004)">
+            <option value="H001 — Sassoon General Hospital (EMS Cardiac Center)" selected>H001 — Sassoon General Hospital (EMS Cardiac Center)</option>
+            <option value="H002 — K.E.M. Hospital (EMS Stroke Center)">H002 — K.E.M. Hospital (EMS Stroke Center)</option>
+            <option value="H003 — Ruby Hall Clinic (Level 1 Trauma Center)">H003 — Ruby Hall Clinic (Level 1 Trauma Center)</option>
+            <option value="H004 — Bharati Hospital (General Emergency)">H004 — Bharati Hospital (General Emergency)</option>
+          </optgroup>
+          <optgroup label="🏥 Major Multi-Specialty &amp; General Hospitals">
+            <option value="Kamla Nehru Hospital, Somwar Peth">Kamla Nehru Hospital, Somwar Peth (450 beds)</option>
+            <option value="Dr. Naidu Infectious Disease Hospital, Pune Station">Dr. Naidu Infectious Disease Hospital (200 beds)</option>
+            <option value="Bharatratna Rajiv Gandhi Hospital, Yerawada">Bharatratna Rajiv Gandhi Hospital, Yerawada (180 beds)</option>
+          </optgroup>
+          <optgroup label="🏙️ Hub Cities">
+            <option value="Pune">Pune City Center (General Routing)</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Nashik">Nashik</option>
+            <option value="Kolhapur">Kolhapur</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <div id="rsim-hosp-badge" style="margin-top:0.4rem;font-size:0.78rem;display:none;background:var(--c-surface2);padding:0.45rem 0.75rem;border-radius:6px;border-left:3px solid var(--c-cyan)"></div>
+    <div id="rsim-route-note" style="font-size:0.78rem;color:var(--c-muted);padding:0.25rem 0">
+      ℹ️ Satara → Selected Hospital activates full 3-route corridor analysis (Wai bypass, Khandala Ghat, NH48 Direct) backed by real warehouse data.
+    </div>
+  </div>
+
+  <!-- ── § 2  Emergency Parameters ── -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title"><span>🚨</span> § 2 — Emergency Parameters
+      <span class="badge badge-red" style="margin-left:auto;font-size:0.72rem">Manual Input Required</span>
+    </div>
+    <div class="sim-grid" style="grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:1rem">
+      <div class="form-group">
+        <label>Emergency Type</label>
+        <select id="rsim-emerg-type">
+          <option value="Accident">Accident</option>
+          <option value="Cardiac">Cardiac</option>
+          <option value="Trauma">Trauma</option>
+          <option value="Stroke">Stroke</option>
+          <option value="Other" selected>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Emergency Severity</label>
+        <select id="rsim-severity">
+          <option value="Minor">Minor</option>
+          <option value="Moderate">Moderate</option>
+          <option value="Major" selected>Major</option>
+          <option value="Critical">Critical</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Triage Level</label>
+        <select id="rsim-triage">
+          <option value="Red" selected>🔴 Red — Critical</option>
+          <option value="Yellow">🟡 Yellow — Urgent</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Urgency Score (1–10)</label>
+        <input type="number" id="rsim-urgency" value="8" min="1" max="10" step="0.5">
+      </div>
+      <div class="form-group">
+        <label>ML Model</label>
+        <select id="rsim-model">
+          <option value="random_forest">🌲 Random Forest</option>
+          <option value="decision_tree">🌳 Decision Tree</option>
+          <option value="xgboost">⚡ XGBoost</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── § 3  Traffic Parameters (auto-derived, shown after run) ── -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title"><span>🚦</span> § 3 — Traffic Parameters
+      <span class="badge badge-green" style="margin-left:auto;font-size:0.72rem">Auto from warehouse.fact_traffic_performance</span>
+    </div>
+    <div id="rsim-traffic-params" style="color:var(--c-muted);font-size:0.82rem;padding:0.4rem 0">
+      Run simulation to auto-fetch per-route traffic data from the warehouse (speed, congestion, density, wait, incidents, occupancy, flow, queue).
+    </div>
+  </div>
+
+  <!-- ── § 4  Weather Parameters ── -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title"><span>🌦️</span> § 4 — Weather Parameters
+      <span class="badge badge-yellow" style="margin-left:auto;font-size:0.72rem">Auto-derived · Override optional</span>
+    </div>
+    <div class="sim-grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1rem">
+      <div class="form-group">
+        <label>Weather Override <span style="font-size:0.7rem;color:var(--c-muted)">(blank = DB historical)</span></label>
+        <select id="rsim-weather">
+          <option value="">— Auto from DB —</option>
+          <option value="0">0 — Clear Sky</option>
+          <option value="2">2 — Partly Cloudy</option>
+          <option value="3">3 — Overcast</option>
+          <option value="45">45 — Fog</option>
+          <option value="51">51 — Light Drizzle</option>
+          <option value="61">61 — Slight Rain</option>
+          <option value="63">63 — Moderate Rain</option>
+          <option value="65">65 — Heavy Rain</option>
+          <option value="80">80 — Rain Showers</option>
+          <option value="95">95 — Thunderstorm</option>
+        </select>
+      </div>
+    </div>
+    <div id="rsim-weather-params" style="margin-top:0.6rem;color:var(--c-muted);font-size:0.82rem">
+      Temperature, wind, precipitation &amp; visibility auto-fetched from <code>warehouse.fact_daily_weather</code>. Road lanes, speed limit and construction status are <strong>not available</strong> in the source schema.
+    </div>
+  </div>
+
+  <!-- ── § 5  Road Parameters (DB-derived note) ── -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title"><span>🛤️</span> § 5 — Road Parameters
+      <span class="badge badge-blue" style="margin-left:auto;font-size:0.72rem">Partially from DB</span>
+    </div>
+    <div style="font-size:0.82rem;color:var(--c-muted);line-height:1.7">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 2rem">
+        <div>✅ <strong style="color:var(--c-green)">Available from DB:</strong> Road type (highway), accident risk score, congestion tier</div>
+        <div>❌ <strong style="color:var(--c-red)">Not in source schema:</strong> Road name, number of lanes, speed limit, traffic signal, construction status</div>
+      </div>
+      <div style="margin-top:0.5rem;font-size:0.76rem">
+        Source: <code>warehouse.dim_road_segment</code> — road_name, lanes, speed_limit_kmph, has_traffic_signal are all NULL (not present in VANET source data).
+      </div>
+    </div>
+  </div>
+
+  <!-- ── § 6  Time Parameters ── -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title"><span>🕐</span> § 6 — Time Parameters
+      <span class="badge badge-yellow" style="margin-left:auto;font-size:0.72rem">Auto (current time) · Override optional</span>
+    </div>
+    <div class="sim-grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1rem">
+      <div class="form-group">
+        <label>Hour Override (0–23) <span style="font-size:0.7rem;color:var(--c-muted)">(blank = current hour)</span></label>
+        <input type="number" id="rsim-hour" placeholder="auto" min="0" max="23">
+      </div>
+      <div class="form-group">
+        <label>Date <span style="font-size:0.7rem;color:var(--c-muted)">(informational)</span></label>
+        <input type="date" id="rsim-date">
+      </div>
+    </div>
+    <div id="rsim-time-derived" style="font-size:0.8rem;color:var(--c-muted);margin-top:0.4rem">
+      Day of week, weekend/weekday flag, and peak-hour classification are auto-derived from the selected time.
+    </div>
+  </div>
+
+  <!-- ── DB Context (auto-populated after run) ── -->
+  <div class="card" id="rsim-context-card" style="display:none;margin-bottom:1rem">
+    <div class="card-title"><span>📊</span> Auto-Derived Context from Database
+      <span class="badge badge-green" style="margin-left:auto;font-size:0.72rem">✓ Live from Warehouse</span>
+    </div>
+    <div id="rsim-context-content"></div>
+  </div>
+
+  <!-- ── Run Button ── -->
+  <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap">
+    <button class="btn-primary" id="btn-rsim" onclick="runRouteSimulation()" style="padding:0.85rem 2.2rem;font-size:1rem">
+      🚑 Compute Route Intelligence
+    </button>
+    <button class="btn-secondary" onclick="resetRouteSimulator()">↺ Reset</button>
+    <div id="rsim-running" style="display:none;align-items:center;gap:0.6rem;color:var(--c-cyan);font-size:0.88rem">
+      <div class="spinner"></div> Querying warehouse &amp; computing route scores…
+    </div>
+  </div>
+  <div class="formula-note" style="margin-bottom:1.5rem">
+    <strong>Route Score Formula:</strong> 0.40×TravelTime + 0.20×Traffic + 0.15×AccidentRisk + 0.15×WeatherRisk + 0.10×RoadCondition &nbsp;|&nbsp;
+    <em>Urgency multiplier applied per emergency severity × triage level · Lower = better</em>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div id="rsim-results" style="display:none">
+
+    <!-- 3 Route Cards -->
+    <div class="card" style="margin-bottom:1.5rem">
+      <div class="card-title"><span>🛣️</span> Route Candidates
+        <span id="rsim-route-badge" style="margin-left:auto;font-size:0.72rem;color:var(--c-muted)"></span>
+      </div>
+      <div id="rsim-route-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.1rem;margin-top:0.75rem"></div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="card" style="margin-bottom:1.5rem">
+      <div class="card-title"><span>📋</span> Route Comparison Table</div>
+      <div id="rsim-comparison-table" style="overflow-x:auto;margin-top:0.5rem"></div>
+    </div>
+
+    <!-- Recommendation + ML Prediction side by side -->
+    <div class="grid-2" style="margin-bottom:1.5rem">
+      <div class="card">
+        <div class="card-title"><span>🏆</span> Recommended Route</div>
+        <div id="rsim-recommendation"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>🤖</span> ML Model Prediction</div>
+        <div id="rsim-ml-result"></div>
+      </div>
+    </div>
+
+    <!-- Data Availability -->
+    <div class="card">
+      <div class="card-title"><span>🔎</span> Data Availability — What the DB Could &amp; Could Not Provide</div>
+      <div id="rsim-data-avail"></div>
+    </div>
+
+  </div><!-- /rsim-results -->
+
+  <!-- Legacy compat (the old simulator still works via nav button) -->
+  <div id="sim-output" style="display:none"></div>
+</div>
+
+<!-- ══════════════════════ PAGE: OLAP PLAYGROUND ════════════════════ -->
+<div class="page" id="page-olap">
+  <div class="page-header">
+    <h2 class="page-title">🔄 OLAP Playground</h2>
+    <p class="page-desc">Interactive OLAP operations — Roll-Up, Drill-Down, Slice, Dice, and Pivot — computed live against the warehouse star schema.</p>
+  </div>
+
+  <!-- Operation Selector -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title"><span>⚙️</span> Configure OLAP Operation</div>
+    <div class="sim-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:1rem">
+      <div class="form-group">
+        <label>Operation</label>
+        <select id="olap-op">
+          <option value="rollup">Roll-Up</option>
+          <option value="drilldown">Drill-Down</option>
+          <option value="slice">Slice</option>
+          <option value="dice">Dice</option>
+          <option value="pivot">Pivot</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Fact Table</label>
+        <select id="olap-fact">
+          <option value="accidents">Accidents</option>
+          <option value="ems">EMS Events</option>
+          <option value="traffic">Traffic</option>
+          <option value="weather">Weather</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Time Level</label>
+        <select id="olap-level">
+          <option value="year">Year</option>
+          <option value="quarter">Quarter</option>
+          <option value="month" selected>Month</option>
+          <option value="day">Day</option>
+          <option value="hour">Hour</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Measure</label>
+        <select id="olap-measure">
+          <option value="acc_count">Accidents</option>
+          <option value="acc_casualties">Casualties</option>
+          <option value="acc_fatal">Fatal</option>
+          <option value="acc_risk">Avg Risk Score</option>
+          <option value="ems_count">EMS Events</option>
+          <option value="ems_red">RED Triage</option>
+          <option value="ems_urgency">Avg Urgency</option>
+          <option value="traf_count">Traffic Records</option>
+          <option value="traf_speed">Avg Speed</option>
+          <option value="traf_congestion">Avg Congestion</option>
+          <option value="wx_days">Weather Days</option>
+          <option value="wx_precip">Avg Precip</option>
+          <option value="wx_temp">Avg Max Temp</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Year Filter (optional)</label>
+        <input type="number" id="olap-year" placeholder="e.g. 2023" min="2000" max="2026">
+      </div>
+      <div class="form-group">
+        <label>Slice Dimension</label>
+        <select id="olap-slice-dim">
+          <option value="">None</option>
+          <option value="weather">Weather</option>
+          <option value="severity">Severity</option>
+          <option value="city">City/Location</option>
+          <option value="triage">Triage</option>
+          <option value="congestion">Congestion</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Slice Value</label>
+        <input type="text" id="olap-slice-val" placeholder="e.g. Rain, fatal, Pune">
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-olap-run" onclick="runOlap()">🔄 Execute OLAP</button>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>📊</span> Result Chart
+        <span id="olap-op-badge" style="margin-left:auto;font-size:0.72rem;color:var(--c-muted)"></span>
+      </div>
+      <div class="chart-wrap" style="height:300px"><canvas id="olap-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🔍</span> Query Details</div>
+      <div id="olap-info" style="font-size:0.8rem;color:var(--c-muted)">Run an operation to see results.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📋</span> Result Data
+      <span id="olap-count" style="margin-left:auto;font-size:0.72rem;color:var(--c-muted)"></span>
+    </div>
+    <div id="olap-table"><div class="loading"><div class="spinner"></div>Run an OLAP operation above…</div></div>
+  </div>
+</div>
+
+  </main>
+</div><!-- end main-wrapper -->
+
+<script>
+// ════════════════════════════════════════════════════════
+//  CONFIGURATION
+// ════════════════════════════════════════════════════════
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 12;
+
+const COLORS = ['#3b82f6','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#84cc16','#f97316','#14b8a6','#a855f7','#64748b'];
+const CHART_REGISTRY = {};
+
+function destroyChart(id) {
+  if (CHART_REGISTRY[id]) { CHART_REGISTRY[id].destroy(); delete CHART_REGISTRY[id]; }
+}
+
+function mkChart(id, type, labels, datasets, opts = {}) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  destroyChart(id);
+  CHART_REGISTRY[id] = new Chart(ctx, {
+    type,
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 14, font: { size: 11 } } } },
+      ...opts
+    }
+  });
+  return CHART_REGISTRY[id];
+}
+
+const fmt = n => (n === null || n === undefined) ? '—' : Number(n).toLocaleString('en-IN');
+const fmtf = (n, d=1) => (n === null || n === undefined) ? '—' : Number(n).toFixed(d);
+
+function badge(val, type) {
+  const cls = type === 'red' ? 'badge-red' : type === 'yellow' ? 'badge-yellow' : type === 'green' ? 'badge-green' : 'badge-blue';
+  return `<span class="badge ${cls}">${val}</span>`;
+}
+
+function riskColor(score) {
+  if (score >= 0.7) return '#ef4444';
+  if (score >= 0.4) return '#f59e0b';
+  return '#10b981';
+}
+
+function riskLabel(score) {
+  if (score >= 0.7) return badge('HIGH', 'red');
+  if (score >= 0.4) return badge('MEDIUM', 'yellow');
+  return badge('LOW', 'green');
+}
+
+// ════════════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════════════
+const pageLoaded = {};
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (!pageLoaded[id]) { loadPage(id); pageLoaded[id] = true; }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+// ════════════════════════════════════════════════════════
+//  DB HEALTH CHECK
+// ════════════════════════════════════════════════════════
+async function checkHealth() {
+  try {
+    const h = await fetch('/api/health').then(r => r.json());
+    const el = document.getElementById('db-status');
+    if (h.status === 'ok') {
+      el.innerHTML = `<span class="status-dot on"></span> Supabase Connected`;
+      el.className = 'db-status connected';
+    } else {
+      el.innerHTML = `<span class="status-dot off"></span> DB Error`;
+    }
+  } catch { }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: OVERVIEW
+// ════════════════════════════════════════════════════════
+async function loadOverview() {
+  const [ov, ph, wx, sv, seg] = await Promise.all([
+    fetch('/api/overview').then(r=>r.json()).catch(()=>({})),
+    fetch('/api/peak_hours').then(r=>r.json()).catch(()=>[]),
+    fetch('/api/weather_impact').then(r=>r.json()).catch(()=>[]),
+    fetch('/api/severity').then(r=>r.json()).catch(()=>[]),
+    fetch('/api/high_risk_segments').then(r=>r.json()).catch(()=>[]),
+  ]);
+
+  // KPIs
+  document.getElementById('kpi-ems').textContent      = fmt(ov.ems_event_count);
+  document.getElementById('kpi-accidents').textContent = fmt(ov.accident_count);
+  document.getElementById('kpi-traffic').textContent   = fmt(ov.traffic_records);
+  document.getElementById('kpi-weather').textContent   = fmt(ov.weather_records);
+  document.getElementById('kpi-hospitals').textContent = fmt(ov.hospital_count);
+  document.getElementById('kpi-roads').textContent     = fmt(ov.road_segments);
+  document.getElementById('kpi-highrisk').textContent  = fmt(ov.high_risk_corridors);
+  document.getElementById('kpi-speed').textContent     = fmtf(ov.avg_speed_kmph) + ' km/h';
+
+  // Hourly accidents
+  if (ph.length && !ph[0]?.error) {
+    mkChart('ov-hourly', 'bar',
+      ph.map(r => r.hour_24 + ':00'),
+      [{
+        label: 'Accidents',
+        data: ph.map(r => r.total_accidents || 0),
+        backgroundColor: ph.map(r => r.is_peak_hour ? 'rgba(239,68,68,0.75)' : 'rgba(59,130,246,0.5)'),
+        borderRadius: 5
+      }],
+      { scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } } },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { footer: ([t]) => t.raw > 0 && ph[t.dataIndex]?.is_peak_hour ? '⚠ Peak Hour' : '' } } } }
+    );
+  }
+
+  // Weather impact
+  if (wx.length && !wx[0]?.error) {
+    mkChart('ov-weather', 'bar',
+      wx.slice(0,8).map(r => r.weather_condition || r.weather),
+      [{ label: 'Accidents', data: wx.slice(0,8).map(r => r.total_accidents),
+         backgroundColor: 'rgba(59,130,246,0.65)', borderRadius: 4 }],
+      { indexAxis: 'y', scales: { x: { beginAtZero: true } } }
+    );
+  }
+
+  // Severity
+  if (sv.length && !sv[0]?.error) {
+    mkChart('ov-severity', 'doughnut',
+      sv.map(r => r.accident_severity),
+      [{ data: sv.map(r => r.count),
+         backgroundColor: ['#7f1d1d','#ef4444','#f59e0b','#10b981','#3b82f6'],
+         borderWidth: 0, hoverOffset: 8 }]
+    );
+  }
+
+  // High-risk segments
+  if (seg.length && !seg[0]?.error) {
+    mkChart('ov-segments', 'bar',
+      seg.slice(0,15).map(r => r.road_segment_id),
+      [{ label: 'Congestion Pressure', data: seg.slice(0,15).map(r => parseFloat(r.mean_congestion_pressure)||0),
+         backgroundColor: 'rgba(239,68,68,0.65)', borderRadius: 4 }],
+      { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+    );
+  }
+
+  // Route preview
+  try {
+    const routes = await fetch('/api/routes').then(r=>r.json());
+    const segs = (routes.segments || []).slice(0,10);
+    if (segs.length) {
+      document.getElementById('ov-route-preview').innerHTML = `
+        <table class="data-table">
+          <thead><tr><th>Rank</th><th>Segment</th><th>Traffic Risk</th><th>Speed Risk</th><th>Incident Risk</th><th>Weather Risk</th><th>Overall Risk</th></tr></thead>
+          <tbody>${segs.map((r,i) => `<tr>
+            <td><strong>#${i+1}</strong></td>
+            <td><strong>${r.road_segment_id}</strong>${r.corridor_group ? '<br><small style="color:var(--c-muted)">' + r.corridor_group + '</small>' : ''}</td>
+            <td><div class="risk-bar-wrap"><div class="risk-bar"><div style="width:${Math.round(r.traffic_risk*100)}%;background:#ef4444;height:100%;border-radius:3px"></div></div><span>${fmtf(r.traffic_risk,3)}</span></div></td>
+            <td><div class="risk-bar-wrap"><div class="risk-bar"><div style="width:${Math.round(r.speed_risk*100)}%;background:#f59e0b;height:100%;border-radius:3px"></div></div><span>${fmtf(r.speed_risk,3)}</span></div></td>
+            <td><div class="risk-bar-wrap"><div class="risk-bar"><div style="width:${Math.round(r.incident_risk*100)}%;background:#8b5cf6;height:100%;border-radius:3px"></div></div><span>${fmtf(r.incident_risk,3)}</span></div></td>
+            <td><div class="risk-bar-wrap"><div class="risk-bar"><div style="width:${Math.round(r.weather_risk*100)}%;background:#06b6d4;height:100%;border-radius:3px"></div></div><span>${fmtf(r.weather_risk,3)}</span></div></td>
+            <td><strong style="color:${riskColor(r.overall_risk_score)}">${fmtf(r.overall_risk_score,4)}</strong> ${riskLabel(r.overall_risk_score)}</td>
+          </tr>`).join('')}</tbody>
+        </table>`;
+    }
+  } catch {}
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: TRAFFIC
+// ════════════════════════════════════════════════════════
+async function loadTraffic() {
+  const d = await fetch('/api/traffic').then(r=>r.json()).catch(()=>({}));
+  const hourly = d.hourly || [];
+  const labels_d = d.congestion_labels || [];
+  const segs = d.top_segments || [];
+  const buckets = d.speed_buckets || [];
+
+  // KPIs
+  const totalPings = hourly.reduce((a,r)=>a+r.ping_count,0);
+  const avgSpeed = hourly.length ? (hourly.reduce((a,r)=>a+parseFloat(r.avg_speed||0),0)/hourly.length) : 0;
+  const gridlockTotal = segs.reduce((a,r)=>a+parseInt(r.gridlock_events_count||0),0);
+  document.getElementById('t-pings').textContent   = fmt(totalPings);
+  document.getElementById('t-speed').textContent   = fmtf(avgSpeed) + ' km/h';
+  document.getElementById('t-wait').textContent    = segs.length ? fmtf(segs.reduce((a,r)=>a+parseFloat(r.mean_wait_time_sec||0),0)/segs.length,1) + 's' : '—';
+  document.getElementById('t-gridlock').textContent= fmt(gridlockTotal);
+
+  // Hourly ping count
+  if (hourly.length) {
+    mkChart('t-hourly','bar',
+      hourly.map(r=>r.hour_24+':00'),
+      [{ label:'Telemetry Pings', data: hourly.map(r=>r.ping_count),
+         backgroundColor:'rgba(6,182,212,0.6)', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+    mkChart('t-hourly-speed','line',
+      hourly.map(r=>r.hour_24+':00'),
+      [{ label:'Avg Speed (km/h)', data: hourly.map(r=>parseFloat(r.avg_speed||0)),
+         borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.1)', fill:true, tension:0.4 }],
+      { scales:{y:{beginAtZero:false}} }
+    );
+  }
+
+  // Congestion labels
+  if (labels_d.length) {
+    mkChart('t-congestion-labels','doughnut',
+      labels_d.map(r=>r.congestion_label),
+      [{ data: labels_d.map(r=>r.count),
+         backgroundColor:['#10b981','#f59e0b','#ef4444','#7f1d1d','#3b82f6','#8b5cf6'],
+         borderWidth:0, hoverOffset:6 }]
+    );
+  }
+
+  // Speed distribution — use rgba instead of hex concat to avoid invalid colors
+  if (buckets.length) {
+    const bColorMap = {
+      'Free-Flow (>80)': 'rgba(16,185,129,0.75)',
+      'Fast (60-80)':    'rgba(59,130,246,0.75)',
+      'Moderate (40-60)':'rgba(245,158,11,0.75)',
+      'Slow (20-40)':    'rgba(239,68,68,0.75)',
+      'Gridlock (<20)':  'rgba(127,29,29,0.85)'
+    };
+    mkChart('t-speed-dist','bar',
+      buckets.map(r=>r.speed_bucket),
+      [{ label:'Record Count', data: buckets.map(r=>r.count),
+         backgroundColor: buckets.map(r=>bColorMap[r.speed_bucket]||'rgba(59,130,246,0.65)'),
+         borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  // Segments table
+  if (segs.length) {
+    document.getElementById('t-segments-table').innerHTML = `
+      <table class="data-table">
+        <thead><tr><th>Segment</th><th>Pings</th><th>Avg Speed</th><th>Avg Wait</th><th>Congestion Pressure</th><th>Gridlock Events</th><th>Status</th></tr></thead>
+        <tbody>${segs.map(r=>{
+          const spd = parseFloat(r.mean_speed_kmph||0);
+          const cls = spd>60?'badge-green':spd>40?'badge-yellow':'badge-red';
+          return `<tr>
+            <td><strong>${r.road_segment_id}</strong></td>
+            <td>${fmt(r.total_telemetry_pings)}</td>
+            <td>${fmtf(r.mean_speed_kmph,1)} km/h</td>
+            <td>${fmtf(r.mean_wait_time_sec,1)} s</td>
+            <td>${fmtf(r.mean_congestion_pressure,4)}</td>
+            <td>${fmt(r.gridlock_events_count)}</td>
+            <td>${badge(spd>60?'Free-Flow':spd>40?'Moderate':'Congested', spd>60?'green':spd>40?'yellow':'red')}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: ACCIDENTS
+// ════════════════════════════════════════════════════════
+async function loadAccidents() {
+  const d = await fetch('/api/accidents').then(r=>r.json()).catch(()=>({}));
+  const sv = d.severity || [];
+  const hourly = d.hourly || [];
+  const loc = d.by_location || [];
+  const rt = d.by_road_type || [];
+  const cause = d.by_cause || [];
+  const wx = d.by_weather || [];
+
+  // KPIs
+  const total = sv.reduce((a,r)=>a+parseInt(r.count||0),0);
+  const fatal = sv.reduce((a,r)=>a+(r.accident_severity==='fatal'?parseInt(r.count||0):0),0);
+  const casualties = sv.reduce((a,r)=>a+parseInt(r.total_casualties||0),0);
+  const avgRisk = sv.length ? sv.reduce((a,r)=>a+parseFloat(r.avg_risk||0),0)/sv.length : 0;
+  document.getElementById('a-total').textContent     = fmt(total);
+  document.getElementById('a-fatal').textContent     = fmt(fatal);
+  document.getElementById('a-casualties').textContent= fmt(casualties);
+  document.getElementById('a-risk').textContent      = fmtf(avgRisk,3);
+
+  if (sv.length) {
+    mkChart('a-severity','doughnut', sv.map(r=>r.accident_severity),
+      [{ data:sv.map(r=>r.count), backgroundColor:['#7f1d1d','#ef4444','#f59e0b','#10b981','#3b82f6'], borderWidth:0, hoverOffset:6 }]
+    );
+    document.getElementById('a-severity-table').innerHTML = `
+      <table class="data-table"><thead><tr><th>Severity</th><th>Count</th><th>Casualties</th><th>Avg Risk</th><th>Share</th></tr></thead>
+      <tbody>${sv.map(r=>{
+        const pct = total ? Math.round(r.count/total*100) : 0;
+        const s = r.accident_severity;
+        return `<tr>
+          <td>${badge(s, s==='fatal'?'red':s==='serious'?'yellow':'green')}</td>
+          <td>${fmt(r.count)}</td><td>${fmt(r.total_casualties)}</td>
+          <td>${fmtf(r.avg_risk,3)}</td>
+          <td><div class="risk-bar-wrap"><div class="risk-bar"><div style="width:${pct}%;background:var(--c-blue);height:100%;border-radius:3px"></div></div><span>${pct}%</span></div></td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  }
+
+  if (hourly.length) {
+    mkChart('a-hourly','line',
+      hourly.map(r=>r.hour_24+':00'),
+      [{ label:'Accidents', data:hourly.map(r=>r.total_accidents||0),
+         borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.12)', fill:true, tension:0.4 },
+       { label:'Casualties', data:hourly.map(r=>r.total_casualties||0),
+         borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,0.05)', fill:true, tension:0.4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+  }
+
+  if (loc.length) {
+    mkChart('a-location','bar',
+      loc.slice(0,12).map(r=>r.city),
+      [{ label:'Accidents', data:loc.slice(0,12).map(r=>r.total_accidents),
+         backgroundColor:'rgba(239,68,68,0.65)', borderRadius:4 }],
+      { indexAxis:'y', scales:{x:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  if (rt.length) {
+    mkChart('a-road-type','bar',
+      rt.map(r=>r.road_type),
+      [{ label:'Accidents', data:rt.map(r=>r.count),
+         backgroundColor:COLORS.map(c=>c+'aa'), borderRadius:4 }],
+      { plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
+    );
+  }
+
+  if (cause.length) {
+    mkChart('a-cause','bar',
+      cause.map(r=>r.cause),
+      [{ label:'Count', data:cause.map(r=>r.count),
+         backgroundColor:'rgba(139,92,246,0.65)', borderRadius:4 }],
+      { indexAxis:'y', scales:{x:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  if (wx.length) {
+    mkChart('a-weather','bar',
+      wx.map(r=>r.weather_condition),
+      [{ label:'Accidents', data:wx.map(r=>r.total_accidents),
+         backgroundColor:'rgba(59,130,246,0.65)', borderRadius:4 },
+       { label:'Fatal', data:wx.map(r=>r.fatal_accidents||0),
+         backgroundColor:'rgba(239,68,68,0.65)', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: WEATHER
+// ════════════════════════════════════════════════════════
+async function loadWeather() {
+  const d = await fetch('/api/weather').then(r=>r.json()).catch(()=>({}));
+  const codes = d.by_code || [];
+  const cities = d.by_city || [];
+  const monthly = d.monthly_temp || [];
+  const wxAcc = d.weather_accidents || [];
+  const precip = d.precip_buckets || [];
+
+  document.getElementById('w-obs').textContent    = fmt(codes.reduce((a,r)=>a+r.observation_count,0));
+  document.getElementById('w-cities').textContent = fmt(cities.length);
+  const avgTemp = cities.length ? cities.reduce((a,r)=>a+parseFloat(r.avg_max_temp||0),0)/cities.length : 0;
+  // Use avg_precip from cities (avg precipitation per day), not wind speed
+  const avgPrec = cities.length ? cities.reduce((a,r)=>a+parseFloat(r.avg_wind_speed||0),0)/cities.length : 0;
+  const totalPrecipAll = cities.reduce((a,r)=>a+parseFloat(r.total_precip_mm||0),0);
+  const avgPrecipPerCity = cities.length ? (totalPrecipAll / cities.length) : 0;
+  document.getElementById('w-temp').textContent   = fmtf(avgTemp)+'°C';
+  document.getElementById('w-precip').textContent = fmtf(avgPrecipPerCity, 0)+' mm';
+
+  // Also fix label text to say Avg Annual Precip
+  const wPrecipLabel = document.querySelector('#kpi-grid-weather .kpi-label');
+  // (no change needed, label already says Avg Precipitation)
+
+  if (codes.length) {
+    mkChart('w-conditions','doughnut',
+      codes.slice(0,10).map(r=>r.condition_name),
+      [{ data:codes.slice(0,10).map(r=>r.observation_count),
+         backgroundColor:COLORS, borderWidth:0, hoverOffset:6 }]
+    );
+  }
+
+  if (precip.length) {
+    const pColors = {'No Rain':'#10b981','Light (<5mm)':'#06b6d4','Moderate (5-20mm)':'#3b82f6','Heavy (20-50mm)':'#f59e0b','Extreme (>50mm)':'#ef4444'};
+    mkChart('w-precip-dist','bar',
+      precip.map(r=>r.precip_bucket),
+      [{ label:'Observation Days', data:precip.map(r=>r.days),
+         backgroundColor:precip.map(r=>pColors[r.precip_bucket]||'#3b82f6')+'99', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  if (monthly.length) {
+    const last60 = monthly.slice(-60);
+    mkChart('w-temp-trend','line',
+      last60.map(r=>r.month_name+' '+r.year),
+      [{ label:'Avg Max Temp (°C)', data:last60.map(r=>parseFloat(r.avg_max_temp||0)),
+         borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.08)', fill:true, tension:0.4, pointRadius:0 },
+       { label:'Avg Min Temp (°C)', data:last60.map(r=>parseFloat(r.avg_min_temp||0)),
+         borderColor:'#06b6d4', backgroundColor:'rgba(6,182,212,0.05)', fill:true, tension:0.4, pointRadius:0 }],
+      { scales:{y:{}, x:{ticks:{maxRotation:45,maxTicksLimit:12}}} }
+    );
+  }
+
+  if (cities.length) {
+    mkChart('w-by-city','bar',
+      cities.map(r=>r.city),
+      [{ label:'Avg Max Temp (°C)', data:cities.map(r=>parseFloat(r.avg_max_temp||0)),
+         backgroundColor:'rgba(239,68,68,0.65)', borderRadius:4 },
+       { label:'Avg Wind Speed (km/h)', data:cities.map(r=>parseFloat(r.avg_wind_speed||0)),
+         backgroundColor:'rgba(59,130,246,0.65)', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+  }
+
+  if (wxAcc.length) {
+    document.getElementById('w-accident-table').innerHTML = `
+      <table class="data-table">
+        <thead><tr><th>Weather Condition</th><th>Visibility</th><th>Accidents</th><th>Casualties</th><th>Fatal</th><th>Avg Risk Score</th></tr></thead>
+        <tbody>${wxAcc.map(r=>`<tr>
+          <td>${badge(r.weather_condition,'blue')}</td>
+          <td>${r.visibility||'—'}</td>
+          <td>${fmt(r.total_accidents)}</td>
+          <td>${fmt(r.total_casualties)}</td>
+          <td>${badge(fmt(r.fatal_accidents),'red')}</td>
+          <td>${fmtf(r.avg_risk_score,3)}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: EMERGENCIES
+// ════════════════════════════════════════════════════════
+async function loadEmergencies() {
+  const d = await fetch('/api/emergencies').then(r=>r.json()).catch(()=>({}));
+  const hourly = d.hourly || [];
+  const triage = d.triage || [];
+  const conds = d.by_condition || [];
+  const hosps = d.by_hospital || [];
+  const demo = d.demographics || [];
+  const complaints = d.by_complaint || [];
+
+  const red    = triage.find(r=>r.triage_priority==='red');
+  const yellow = triage.find(r=>r.triage_priority==='yellow');
+  const green  = triage.find(r=>r.triage_priority==='green');
+  document.getElementById('e-red').textContent     = fmt(red?.count);
+  document.getElementById('e-yellow').textContent  = fmt(yellow?.count);
+  document.getElementById('e-green').textContent   = fmt(green?.count);
+  document.getElementById('e-urgency').textContent = fmtf(triage.reduce((a,r)=>a+parseFloat(r.avg_urgency||0),0)/Math.max(triage.length,1), 2);
+
+  if (hourly.length) {
+    mkChart('e-hourly','bar',
+      hourly.map(r=>r.hour_24+':00'),
+      [{ label:'EMS Events', data:hourly.map(r=>r.event_count||0),
+         backgroundColor: hourly.map(r=>r.is_peak_hour?'rgba(239,68,68,0.75)':'rgba(139,92,246,0.5)'),
+         borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  if (triage.length) {
+    mkChart('e-triage','doughnut',
+      triage.map(r=>r.triage_priority.charAt(0).toUpperCase()+r.triage_priority.slice(1)),
+      [{ data:triage.map(r=>r.count),
+         backgroundColor:['#ef4444','#f59e0b','#10b981'], borderWidth:0, hoverOffset:6 }]
+    );
+  }
+
+  if (hosps.length) {
+    mkChart('e-hospitals','bar',
+      hosps.map(r=>r.hospital_code+'\n('+r.facility_type.replace('_',' ')+')'),
+      [{ label:'Total Dispatches', data:hosps.map(r=>parseInt(r.total_dispatches||0)),
+         backgroundColor:'rgba(59,130,246,0.7)', borderRadius:4 },
+       { label:'Red Cases', data:hosps.map(r=>parseInt(r.red_priority_cases||0)),
+         backgroundColor:'rgba(239,68,68,0.7)', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+  }
+
+  if (conds.length) {
+    mkChart('e-conditions','bar',
+      conds.map(r=>r.condition),
+      [{ label:'EMS Events', data:conds.map(r=>r.count),
+         backgroundColor: COLORS.map(c=>c+'aa'), borderRadius:4 }],
+      { indexAxis:'y', scales:{x:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  if (demo.length) {
+    mkChart('e-gender','doughnut',
+      demo.map(r=>(r.patient_gender||'Unknown').charAt(0).toUpperCase()+(r.patient_gender||'').slice(1)+' (avg '+fmtf(r.avg_age,0)+'y)'),
+      [{ data:demo.map(r=>r.count), backgroundColor:['#3b82f6','#ec4899','#10b981'], borderWidth:0, hoverOffset:6 }]
+    );
+  }
+
+  if (complaints.length) {
+    mkChart('e-complaints','bar',
+      complaints.map(r=>r.chief_complaint),
+      [{ label:'Cases', data:complaints.map(r=>r.count),
+         backgroundColor:'rgba(245,158,11,0.65)', borderRadius:4 }],
+      { indexAxis:'y', scales:{x:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  if (hosps.length) {
+    document.getElementById('e-hospital-table').innerHTML = `
+      <table class="data-table">
+        <thead><tr><th>Code</th><th>Type</th><th>Total Dispatches</th><th>Red Cases</th><th>Yellow Cases</th><th>Avg Urgency Score</th><th>Avg Patient Age</th></tr></thead>
+        <tbody>${hosps.map(r=>`<tr>
+          <td><strong>${r.hospital_code}</strong></td>
+          <td>${(r.facility_type||'').replace(/_/g,' ')}</td>
+          <td>${fmt(r.total_dispatches)}</td>
+          <td>${badge(fmt(r.red_priority_cases),'red')}</td>
+          <td>${badge(fmt(r.yellow_priority_cases),'yellow')}</td>
+          <td>${fmtf(r.avg_urgency_score,2)}</td>
+          <td>${fmtf(r.avg_patient_age,1)} yrs</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: ROUTES
+// ════════════════════════════════════════════════════════
+let allRouteData = [];
+
+async function loadRoutes() {
+  const d = await fetch('/api/routes').then(r=>r.json()).catch(()=>({}));
+  allRouteData = d.segments || [];
+  const accRisk = d.accident_risk_by_location || [];
+
+  const high = allRouteData.filter(r=>r.overall_risk_score>=0.7).length;
+  const med  = allRouteData.filter(r=>r.overall_risk_score>=0.4&&r.overall_risk_score<0.7).length;
+  const low  = allRouteData.filter(r=>r.overall_risk_score<0.4).length;
+  document.getElementById('r-highrisk').textContent = fmt(high);
+  document.getElementById('r-medrisk').textContent  = fmt(med);
+  document.getElementById('r-lowrisk').textContent  = fmt(low);
+
+  // Risk distribution
+  mkChart('r-risk-dist','doughnut',
+    ['High Risk (≥0.7)','Medium Risk (0.4–0.7)','Low Risk (<0.4)'],
+    [{ data:[high,med,low], backgroundColor:['#ef4444','#f59e0b','#10b981'], borderWidth:0, hoverOffset:6 }]
+  );
+
+  // Accident risk by city
+  if (accRisk.length) {
+    mkChart('r-acc-risk','bar',
+      accRisk.slice(0,12).map(r=>r.city),
+      [{ label:'Accidents', data:accRisk.slice(0,12).map(r=>r.accident_count),
+         backgroundColor:'rgba(239,68,68,0.65)', borderRadius:4 },
+       { label:'Avg Risk Score ×100', data:accRisk.slice(0,12).map(r=>parseFloat(r.avg_risk_score||0)*100),
+         backgroundColor:'rgba(139,92,246,0.65)', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+  }
+
+  renderRouteTable(allRouteData);
+}
+
+function renderRouteTable(data) {
+  document.getElementById('r-table').innerHTML = `
+    <table class="data-table">
+      <thead><tr><th>Rank</th><th>Segment</th><th>Avg Speed</th><th>Wait Time</th><th>Congestion</th><th>Gridlock</th><th>Traffic Risk</th><th>Speed Risk</th><th>Incident Risk</th><th>Weather Risk</th><th>Overall Risk</th></tr></thead>
+      <tbody>${data.map((r,i)=>`<tr>
+        <td><strong>#${i+1}</strong></td>
+        <td><strong>${r.road_segment_id}</strong></td>
+        <td>${fmtf(r.mean_speed,1)} km/h</td>
+        <td>${fmtf(r.mean_wait_s,1)} s</td>
+        <td>${fmtf(r.mean_congestion,4)}</td>
+        <td>${fmt(r.gridlock_count)}</td>
+        <td>${riskBar(r.traffic_risk,'#ef4444')}</td>
+        <td>${riskBar(r.speed_risk,'#f59e0b')}</td>
+        <td>${riskBar(r.incident_risk,'#8b5cf6')}</td>
+        <td>${riskBar(r.weather_risk,'#06b6d4')}</td>
+        <td><strong style="color:${riskColor(r.overall_risk_score)}">${fmtf(r.overall_risk_score,4)}</strong> ${riskLabel(r.overall_risk_score)}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function riskBar(val, color) {
+  return `<div class="risk-bar-wrap"><div class="risk-bar"><div style="width:${Math.round(parseFloat(val||0)*100)}%;background:${color};height:100%;border-radius:3px"></div></div><span>${fmtf(val,3)}</span></div>`;
+}
+
+function filterRouteTable() {
+  const search = document.getElementById('r-search').value.toLowerCase();
+  const rf = document.getElementById('r-risk-filter').value;
+  let filtered = allRouteData.filter(r => {
+    const matchSearch = !search || r.road_segment_id.toLowerCase().includes(search);
+    const score = parseFloat(r.overall_risk_score||0);
+    const matchRisk = !rf ||
+      (rf==='high' && score>=0.7) ||
+      (rf==='med'  && score>=0.4 && score<0.7) ||
+      (rf==='low'  && score<0.4);
+    return matchSearch && matchRisk;
+  });
+  renderRouteTable(filtered);
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: HOSPITALS
+// ════════════════════════════════════════════════════════
+async function loadHospitals() {
+  const d = await fetch('/api/hospitals').then(r=>r.json()).catch(()=>({}));
+  const ems = d.ems_hospitals || [];
+  const pmc = d.pmc_summary || {};
+  const types = d.by_type || [];
+  const zones = d.by_zone || [];
+  const own = d.ownership || [];
+  const topPmc = d.top_pmc || [];
+
+  document.getElementById('h-total').textContent       = fmt((pmc.total_facilities||0)+4);
+  document.getElementById('h-beds').textContent        = fmt(pmc.total_beds);
+  document.getElementById('h-emerg-beds').textContent  = fmt(pmc.total_emergency_beds);
+  document.getElementById('h-ambulances').textContent  = fmt(pmc.total_ambulances);
+
+  if (ems.length) {
+    mkChart('h-dispatch','bar',
+      ems.map(r=>r.hospital_code+'\n'+r.facility_type.replace(/_/g,' ')),
+      [{ label:'Total Dispatches', data:ems.map(r=>parseInt(r.total_dispatches||0)),
+         backgroundColor:'rgba(59,130,246,0.7)', borderRadius:4 },
+       { label:'Red Cases', data:ems.map(r=>parseInt(r.red_priority_cases||0)),
+         backgroundColor:'rgba(239,68,68,0.7)', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+    document.getElementById('h-ems-table').innerHTML = `
+      <table class="data-table">
+        <thead><tr><th>Code</th><th>Type</th><th>Total Dispatches</th><th>Red Cases</th><th>Yellow Cases</th><th>Avg Urgency</th><th>Total Beds</th><th>Emergency Beds</th><th>Ambulances</th></tr></thead>
+        <tbody>${ems.map(r=>`<tr>
+          <td><strong>${r.hospital_code}</strong></td>
+          <td>${(r.facility_type||'').replace(/_/g,' ')}</td>
+          <td>${fmt(r.total_dispatches)}</td>
+          <td>${badge(fmt(r.red_priority_cases),'red')}</td>
+          <td>${badge(fmt(r.yellow_priority_cases),'yellow')}</td>
+          <td>${fmtf(r.avg_urgency_score,2)}</td>
+          <td>${r.total_beds||'<em style="color:var(--c-muted)">N/A</em>'}</td>
+          <td>${r.emergency_beds||'<em style="color:var(--c-muted)">N/A</em>'}</td>
+          <td>${r.ambulance_count||'<em style="color:var(--c-muted)">N/A</em>'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+  }
+
+  if (own.length) {
+    mkChart('h-ownership','doughnut',
+      own.map(r=>r.ownership_class),
+      [{ data:own.map(r=>r.count), backgroundColor:['#3b82f6','#ec4899','#64748b'], borderWidth:0, hoverOffset:6 }]
+    );
+  }
+
+  if (types.length) {
+    mkChart('h-types','bar',
+      types.map(r=>r.facility_type),
+      [{ label:'Facilities', data:types.map(r=>r.count),
+         backgroundColor:'rgba(16,185,129,0.65)', borderRadius:4 }],
+      { indexAxis:'y', scales:{x:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  if (zones.length) {
+    mkChart('h-zones','bar',
+      zones.map(r=>'Zone '+r.zone_no),
+      [{ label:'Facilities', data:zones.map(r=>r.facility_count),
+         backgroundColor:'rgba(139,92,246,0.65)', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}}, plugins:{legend:{display:false}} }
+    );
+  }
+
+  if (topPmc.length) {
+    document.getElementById('h-pmc-table').innerHTML = `
+      <table class="data-table">
+        <thead><tr><th>Code</th><th>Facility Name</th><th>Type</th><th>Ward</th><th>Ownership</th><th>Total Beds</th><th>Emerg. Beds</th><th>Doctors</th><th>Ambulance</th><th>Pharmacy</th></tr></thead>
+        <tbody>${topPmc.map(r=>`<tr>
+          <td><small>${r.hospital_code}</small></td>
+          <td>${r.facility_name||'—'}</td>
+          <td><small>${(r.facility_type||'').replace(/_/g,' ')}</small></td>
+          <td><small>${r.ward_name||'—'}</small></td>
+          <td>${badge(r.ownership_class||'?', r.ownership_class==='Private'?'yellow':'blue')}</td>
+          <td>${r.total_beds||'—'}</td>
+          <td>${r.emergency_beds||'—'}</td>
+          <td>${r.doctor_count||'—'}</td>
+          <td>${r.has_ambulance_service===true?'✅':r.has_ambulance_service===false?'❌':'—'}</td>
+          <td>${r.pharmacy_available===true?'✅':r.pharmacy_available===false?'❌':'—'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: WAREHOUSE
+// ════════════════════════════════════════════════════════
+async function loadWarehouse() {
+  const ov = await fetch('/api/overview').then(r=>r.json()).catch(()=>({}));
+  const stg = ov.staging||{};
+  const wh  = ov.warehouse||{};
+  const EXP_STG = {traffic:195714,weather:91320,accidents:20000,hospitals:737,ems:20000};
+  const EXP_WH  = {dim_date:9862,dim_hospital:741,dim_road_segment:500,dim_time_of_day:1440,dim_weather_condition:16,fact_road_accidents:20000,fact_ems_events:20000,fact_daily_weather:91320,fact_traffic_performance:195714};
+  function row(n,c,e) {
+    const cls = c===0?'empty':'full'; const tag = e&&c===e?' ✓':'';
+    return `<div class="wh-row"><span class="wh-table">${n}</span><span class="wh-count ${cls}">${fmt(c)}${tag}</span></div>`;
+  }
+  document.getElementById('wh-counts').innerHTML = `
+    <div class="wh-grid">
+      <div class="wh-section"><h3>📥 Staging</h3>
+        ${row('stg_vanet_traffic',stg.traffic,EXP_STG.traffic)}
+        ${row('stg_daily_weather',stg.weather,EXP_STG.weather)}
+        ${row('stg_accidents_roads',stg.accidents,EXP_STG.accidents)}
+        ${row('stg_hospital_infra',stg.hospitals,EXP_STG.hospitals)}
+        ${row('stg_ems_events',stg.ems,EXP_STG.ems)}
+      </div>
+      <div class="wh-section"><h3>⭐ Dimensions</h3>
+        ${row('dim_date',wh.dim_date,EXP_WH.dim_date)}
+        ${row('dim_hospital',wh.dim_hospital,EXP_WH.dim_hospital)}
+        ${row('dim_location',wh.dim_location,null)}
+        ${row('dim_road_segment',wh.dim_road_segment,EXP_WH.dim_road_segment)}
+        ${row('dim_time_of_day',wh.dim_time_of_day,EXP_WH.dim_time_of_day)}
+        ${row('dim_weather_condition',wh.dim_weather_condition,EXP_WH.dim_weather_condition)}
+      </div>
+      <div class="wh-section"><h3>📊 Facts</h3>
+        ${row('fact_road_accidents',wh.fact_road_accidents,EXP_WH.fact_road_accidents)}
+        ${row('fact_ems_events',wh.fact_ems_events,EXP_WH.fact_ems_events)}
+        ${row('fact_daily_weather',wh.fact_daily_weather,EXP_WH.fact_daily_weather)}
+        ${row('fact_traffic_performance',wh.fact_traffic_performance,EXP_WH.fact_traffic_performance)}
+      </div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: ML
+// ════════════════════════════════════════════════════════
+async function loadML() {
+  const [cl,clf,rules,anom,trends] = await Promise.all([
+    fetch('/api/clustering').then(r=>r.json()).catch(()=>({})),
+    fetch('/api/classification').then(r=>r.json()).catch(()=>({})),
+    fetch('/api/association_rules').then(r=>r.json()).catch(()=>[]),
+    fetch('/api/anomalies').then(r=>r.json()).catch(()=>({})),
+    fetch('/api/trends').then(r=>r.json()).catch(()=>({})),
+  ]);
+
+  if (cl.clusters && !cl.error) {
+    const clusters = Object.entries(cl.clusters);
+    document.getElementById('ml-cluster').innerHTML = `
+      <div class="cluster-meta">k=${cl.k} | Silhouette: <strong>${cl.silhouette_score}</strong> | Davies-Bouldin: <strong>${cl.davies_bouldin_score}</strong></div>
+      <div class="cluster-grid">${clusters.map(([k,c],i)=>`
+        <div class="cluster-card"><div class="cluster-num" style="color:${COLORS[i]}">${k}</div>
+        <div class="cluster-lbl">${c.label}</div><div class="cluster-cnt">${fmt(c.segment_count)} segs</div>
+        <div class="cluster-info">${c.mean_speed?.toFixed(1)||'?'} km/h · ${c.mean_congestion?.toFixed(3)||'?'}</div></div>`).join('')}
+      </div>`;
+  } else {
+    document.getElementById('ml-cluster').innerHTML = `<div class="ml-empty">Run: <code>python -m ml.run_all_ml</code></div>`;
+  }
+
+  if (clf.accuracy && !clf.error) {
+    document.getElementById('ml-class').innerHTML = `
+      <div class="ml-metrics">
+        <div class="wh-row"><span>Model</span><span style="color:var(--c-blue)">${clf.model||'RandomForest'}</span></div>
+        <div class="wh-row"><span>Accuracy</span><span style="color:var(--c-green);font-weight:700">${(clf.accuracy*100).toFixed(2)}%</span></div>
+        <div class="wh-row"><span>F1 (weighted)</span><span>${clf.f1_weighted?.toFixed(4)}</span></div>
+        <div class="wh-row"><span>CV Accuracy</span><span>${(clf.cv_accuracy_mean*100).toFixed(2)}% ± ${(clf.cv_accuracy_std*100).toFixed(2)}%</span></div>
+        <div class="wh-row"><span>Train / Test</span><span>${fmt(clf.train_size)} / ${fmt(clf.test_size)}</span></div>
+        ${Object.entries(clf.feature_importances||{}).slice(0,5).map(([f,v])=>`
+          <div class="wh-row"><span style="font-size:0.78rem">${f}</span>
+          <div class="risk-bar-wrap" style="flex:0.4"><div class="risk-bar"><div style="width:${Math.round(v*100*5)}%;background:var(--c-purple);height:100%;border-radius:3px"></div></div>
+          <span style="font-size:0.75rem">${v.toFixed(4)}</span></div></div>`).join('')}
+      </div>`;
+  } else {
+    document.getElementById('ml-class').innerHTML = `<div class="ml-empty">Run ML suite first.</div>`;
+  }
+
+  if (rules.length) {
+    document.getElementById('ml-rules').innerHTML = `
+      <div class="rules-header"><span>Antecedents</span><span>→</span><span>Consequents</span><span>Support</span><span>Confidence</span><span>Lift</span></div>
+      ${rules.slice(0,20).map(r=>`<div class="rule-row">
+        <span class="rule-ant">${r.antecedents}</span><span class="rule-arr">→</span>
+        <span class="rule-con">${r.consequents}</span>
+        <span>${r.support}</span><span>${r.confidence}</span>
+        <span style="color:var(--c-green)">${r.lift}</span></div>`).join('')}`;
+  } else {
+    document.getElementById('ml-rules').innerHTML = `<div class="ml-empty">Run ML suite to generate association rules.</div>`;
+  }
+
+  if (anom.traffic && !anom.traffic.error) {
+    document.getElementById('ml-anomaly').innerHTML = `
+      <div class="wh-row"><span>Traffic Records</span><span>${fmt(anom.traffic.total_records)}</span></div>
+      <div class="wh-row"><span>Traffic Anomalies</span><span style="color:var(--c-red)">${fmt(anom.traffic.anomalies_detected)} (${anom.traffic.anomaly_pct}%)</span></div>
+      ${anom.ems?`<div class="wh-row"><span>EMS Records</span><span>${fmt(anom.ems.total_records)}</span></div>
+      <div class="wh-row"><span>EMS Anomalies</span><span style="color:var(--c-orange)">${fmt(anom.ems.anomalies_detected)} (${anom.ems.anomaly_pct}%)</span></div>`:''}
+      <div style="font-size:0.75rem;color:var(--c-muted);margin-top:0.75rem">Algorithm: Isolation Forest (contamination=5%)</div>`;
+  } else {
+    document.getElementById('ml-anomaly').innerHTML = `<div class="ml-empty">Run ML suite first.</div>`;
+  }
+
+  // EMS dispatch by hour — use trends data if available, else fallback to live API
+  const emsHours = trends.peak_ems_hours;
+  if (emsHours && emsHours.length) {
+    const ph = emsHours.slice(0,24);
+    mkChart('ml-ems-trend','line',
+      ph.map(r=>(r.hour_24??r.hour_col??'')+'h'),
+      [{ label:'EMS Events/Hour', data:ph.map(r=>r.ems_count||0),
+         borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.12)', fill:true, tension:0.4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+  } else {
+    // Fallback: load EMS hourly from live API
+    fetch('/api/emergencies').then(r=>r.json()).then(ed=>{
+      const hourly = ed.hourly || [];
+      if (hourly.length) {
+        mkChart('ml-ems-trend','line',
+          hourly.map(r=>r.hour_24+':00'),
+          [{ label:'EMS Events/Hour', data:hourly.map(r=>r.event_count||0),
+             borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.12)', fill:true, tension:0.4 }],
+          { scales:{y:{beginAtZero:true}} }
+        );
+      }
+    }).catch(()=>{});
+  }
+
+  // Accident trend by hour — use trends data if available, else fallback
+  const accHours = trends.hourly_accidents;
+  if (accHours && accHours.length) {
+    const ah = accHours.slice(0,24);
+    mkChart('ml-acc-trend','line',
+      ah.map(r=>(r.hour_24??r.hour_col??'')+'h'),
+      [{ label:'Accidents/Hour', data:ah.map(r=>r.accident_count||0),
+         borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.12)', fill:true, tension:0.4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+  } else {
+    // Fallback: load accident hourly from live API
+    fetch('/api/peak_hours').then(r=>r.json()).then(ph=>{
+      if (ph && ph.length && !ph[0]?.error) {
+        mkChart('ml-acc-trend','line',
+          ph.map(r=>r.hour_24+':00'),
+          [{ label:'Accidents/Hour', data:ph.map(r=>r.total_accidents||0),
+             borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.12)', fill:true, tension:0.4 }],
+          { scales:{y:{beginAtZero:true}} }
+        );
+      }
+    }).catch(()=>{});
+  }
+
+  // Weather-accident heatmap — use trends data if available, else fallback
+  const wxImpact = trends.weather_accident_impact;
+  if (wxImpact && wxImpact.length) {
+    const wi = wxImpact.slice(0,12);
+    mkChart('ml-wx-heatmap','bar',
+      wi.map(r=>r.weather||'?'),
+      [{ label:'Accidents', data:wi.map(r=>r.accident_count||0),
+         backgroundColor:'rgba(59,130,246,0.65)', borderRadius:4 },
+       { label:'Avg Risk ×100', data:wi.map(r=>(parseFloat(r.avg_risk||0)*100).toFixed(2)),
+         backgroundColor:'rgba(239,68,68,0.55)', borderRadius:4 }],
+      { scales:{y:{beginAtZero:true}} }
+    );
+  } else {
+    // Fallback: use weather impact API
+    fetch('/api/weather_impact').then(r=>r.json()).then(wi=>{
+      if (wi && wi.length && !wi[0]?.error) {
+        mkChart('ml-wx-heatmap','bar',
+          wi.slice(0,12).map(r=>r.weather_condition||'?'),
+          [{ label:'Accidents', data:wi.slice(0,12).map(r=>r.total_accidents||0),
+             backgroundColor:'rgba(59,130,246,0.65)', borderRadius:4 },
+           { label:'Fatal', data:wi.slice(0,12).map(r=>r.fatal_accidents||0),
+             backgroundColor:'rgba(239,68,68,0.55)', borderRadius:4 }],
+          { scales:{y:{beginAtZero:true}} }
+        );
+      }
+    }).catch(()=>{});
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: RANDOM FOREST
+// ════════════════════════════════════════════════════════
+async function loadRandomForest() {
+  const d = await fetch('/api/random_forest').then(r => r.json()).catch(() => ({}));
+
+  if (d.error) {
+    document.getElementById('rf-accuracy').textContent = '—';
+    document.getElementById('rf-f1').textContent = '—';
+    document.getElementById('rf-prec').textContent = '—';
+    document.getElementById('rf-rec').textContent = '—';
+    document.getElementById('rf-cv').textContent = '—';
+    document.getElementById('rf-split').textContent = '—';
+    const empty = `<div class="ml-empty">${d.error}<br><code>${d.instruction||'Run: python -m ml.run_all_ml'}</code></div>`;
+    document.getElementById('rf-cm-wrap').innerHTML = empty;
+    document.getElementById('rf-perclass').innerHTML = empty;
+    return;
+  }
+
+  // ── KPIs ──────────────────────────────────────────────
+  document.getElementById('rf-accuracy').textContent = d.accuracy !== undefined ? (d.accuracy * 100).toFixed(2) + '%' : '—';
+  document.getElementById('rf-f1').textContent       = d.f1_weighted !== undefined ? d.f1_weighted.toFixed(4) : '—';
+  document.getElementById('rf-prec').textContent     = d.precision_weighted !== undefined ? d.precision_weighted.toFixed(4) : '—';
+  document.getElementById('rf-rec').textContent      = d.recall_weighted !== undefined ? d.recall_weighted.toFixed(4) : '—';
+  if (d.cv_accuracy_mean !== undefined) {
+    document.getElementById('rf-cv').textContent = `${(d.cv_accuracy_mean*100).toFixed(2)}% \u00b1 ${(d.cv_accuracy_std*100).toFixed(2)}%`;
+  }
+  if (d.train_size !== undefined) {
+    document.getElementById('rf-split').textContent = `${fmt(d.train_size)} / ${fmt(d.test_size)}`;
+  }
+
+  // ── Feature Importance Chart ───────────────────────────
+  const fi = d.feature_importances || {};
+  const fiEntries = Object.entries(fi).sort((a, b) => b[1] - a[1]);
+  if (fiEntries.length) {
+    mkChart('rf-feat-chart', 'bar',
+      fiEntries.map(([n]) => n),
+      [{ label: 'Feature Importance', data: fiEntries.map(([, v]) => v),
+         backgroundColor: COLORS.map(c => c + 'cc'), borderRadius: 4 }],
+      { indexAxis: 'y',
+        scales: { x: { beginAtZero: true, max: fiEntries[0][1] * 1.15 } },
+        plugins: { legend: { display: false } } }
+    );
+  }
+
+  // ── Confusion Matrix Table ──────────────────────────────
+  const cm = d.confusion_matrix || {};
+  const cmLabels = cm.labels || [];
+  const cmMatrix = cm.matrix || [];
+  if (cmLabels.length && cmMatrix.length) {
+    const cmHTML = `
+      <table class="data-table">
+        <thead><tr><th>Actual \ Predicted</th>${cmLabels.map(l => `<th style="color:var(--c-cyan)">${l}</th>`).join('')}</tr></thead>
+        <tbody>${cmMatrix.map((row, i) => `
+          <tr><td><strong>${cmLabels[i]}</strong></td>
+          ${row.map((val, j) => {
+            const isCorrect = i === j;
+            const bg = isCorrect ? 'rgba(16,185,129,0.18)' : (val > 0 ? 'rgba(239,68,68,0.12)' : '');
+            return `<td style="background:${bg};font-weight:${isCorrect?700:400};color:${isCorrect?'var(--c-green)':''}">` +
+              `${fmt(val)}</td>`;
+          }).join('')}</tr>`).join('')}
+        </tbody>
+      </table>`;
+    document.getElementById('rf-cm-wrap').innerHTML = cmHTML;
+
+    // CM bar chart — correct vs misclassified per class
+    const correctCounts = cmMatrix.map((row, i) => row[i] || 0);
+    const wrongCounts   = cmMatrix.map((row, i) => row.reduce((a,v,j) => a + (j!==i ? v : 0), 0));
+    mkChart('rf-cm-chart', 'bar', cmLabels,
+      [{ label: 'Correctly Classified', data: correctCounts,
+         backgroundColor: 'rgba(16,185,129,0.7)', borderRadius: 4 },
+       { label: 'Misclassified',        data: wrongCounts,
+         backgroundColor: 'rgba(239,68,68,0.6)', borderRadius: 4 }],
+      { scales: { y: { beginAtZero: true } } }
+    );
+  }
+
+  // ── Per-class Metrics ──────────────────────────────────
+  const pc = d.per_class_metrics || {};
+  const pcKeys = Object.keys(pc);
+  if (pcKeys.length) {
+    const riskColors = { Low: 'var(--c-green)', Medium: 'var(--c-orange)', High: 'var(--c-red)' };
+    document.getElementById('rf-perclass').innerHTML = `
+      <table class="data-table">
+        <thead><tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support (test)</th></tr></thead>
+        <tbody>${pcKeys.map(cls => `<tr>
+          <td><strong style="color:${riskColors[cls]||'var(--c-blue)'}">${cls}</strong></td>
+          <td>${(pc[cls].precision * 100).toFixed(1)}%</td>
+          <td>${(pc[cls].recall    * 100).toFixed(1)}%</td>
+          <td>${(pc[cls].f1        * 100).toFixed(1)}%</td>
+          <td>${fmt(pc[cls].support)}</td>
+        </tr>`).join('')}
+        </tbody>
+      </table>
+      <div style="font-size:0.76rem;color:var(--c-muted);margin-top:0.5rem">
+        Target derivation: ${d.target_derivation || 'DERIVED from congestion_label and avg_wait_time_s thresholds.'}
+      </div>`;
+  } else {
+    document.getElementById('rf-perclass').innerHTML = '<div class="ml-empty">Run ML suite first.</div>';
+  }
+}
+
+async function runRFPredict() {
+  const btn = document.getElementById('btn-rf-predict');
+  const out = document.getElementById('rf-pred-output');
+  btn.disabled = true;
+  btn.textContent = '⏳ Predicting…';
+  out.style.display = 'block';
+  out.innerHTML = '<div class="loading"><div class="spinner"></div>Computing prediction…</div>';
+
+  const featureMap = {
+    avg_speed_kmph:       'rf-in-speed',
+    avg_wait_time_s:      'rf-in-wait',
+    density_veh_per_km:   'rf-in-density',
+    occupancy_pct:        'rf-in-occ',
+    congestion_pressure:  'rf-in-cong',
+    visibility_km:        'rf-in-vis',
+    rain_intensity_mmph:  'rf-in-rain',
+    hour_24:              'rf-in-hour',
+  };
+
+  const body = {};
+  Object.entries(featureMap).forEach(([feat, elId]) => {
+    const el = document.getElementById(elId);
+    if (el) body[feat] = parseFloat(el.value) || 0;
+  });
+
+  try {
+    const res = await fetch('/api/rf_predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      out.innerHTML = `<div class="err-msg">Error: ${data.error}</div>`;
+      return;
+    }
+
+    const riskColors = { Low: 'var(--c-green)', Medium: 'var(--c-orange)', High: 'var(--c-red)' };
+    const cls = data.predicted_class || '?';
+    const prob = data.probabilities || {};
+    const clsColor = riskColors[cls] || 'var(--c-blue)';
+
+    out.innerHTML = `
+      <div style="border:2px solid ${clsColor};border-radius:10px;padding:1.25rem;background:rgba(255,255,255,0.03)">
+        <div style="font-size:1.4rem;font-weight:800;color:${clsColor};margin-bottom:0.75rem">
+          Predicted Delay Risk: ${cls}
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem">
+          ${Object.entries(prob).map(([c, p]) =>
+            `<div style="background:var(--c-surface2);border-radius:8px;padding:0.5rem 1rem;text-align:center">
+               <div style="font-size:0.75rem;color:var(--c-muted)">${c}</div>
+               <div style="font-weight:700;color:${riskColors[c]||'var(--c-blue)'}">${(p*100).toFixed(1)}%</div>
+             </div>`).join('')}
+        </div>
+        <div style="font-size:0.82rem;color:var(--c-muted);margin-bottom:0.75rem">${data.explanation || ''}</div>
+        ${data.route_intelligence_note ? `
+          <div style="font-size:0.8rem;background:var(--c-surface2);border-radius:6px;padding:0.6rem 0.9rem;color:var(--c-secondary)">
+            <strong>Route Intelligence:</strong> ${data.route_intelligence_note}
+          </div>` : ''}
+        <div style="font-size:0.72rem;color:var(--c-muted);margin-top:0.75rem;font-style:italic">${data.note || ''}</div>
+      </div>`;
+
+    // Show route note card
+    const rn = document.getElementById('rf-route-note');
+    if (rn && data.route_intelligence_note) {
+      rn.style.display = 'block';
+      rn.innerHTML = `<div class="info-banner" style="border-color:${clsColor}">
+        🛣️ <strong>Route Intelligence Link:</strong> ${data.route_intelligence_note}
+      </div>`;
+    }
+  } catch(e) {
+    out.innerHTML = `<div class="err-msg">Prediction failed: ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🌲 Predict Delay Risk';
+  }
+}
+
+function resetRFForm() {
+  const defaults = {
+    'rf-in-speed': 45, 'rf-in-wait': 55, 'rf-in-density': 30,
+    'rf-in-occ': 0.55, 'rf-in-cong': 0.6, 'rf-in-vis': 5,
+    'rf-in-rain': 2, 'rf-in-hour': 9,
+  };
+  Object.entries(defaults).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  const out = document.getElementById('rf-pred-output');
+  const rn  = document.getElementById('rf-route-note');
+  if (out) { out.style.display = 'none'; out.innerHTML = ''; }
+  if (rn)  { rn.style.display  = 'none'; rn.innerHTML = ''; }
+}
+
+// ════════════════════════════════════════════════════════
+//  SIMULATOR
+// ════════════════════════════════════════════════════════
+async function runSimulation() {
+  const btn = document.getElementById('btn-sim');
+  const out = document.getElementById('sim-output');
+  btn.disabled=true; btn.textContent='⏳ Computing…';
+  out.style.display='block';
+  out.innerHTML='<div class="loading"><div class="spinner"></div>Running simulation…</div>';
+  try {
+    const res = await fetch('/api/simulate',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        city: document.getElementById('sim-city').value,
+        hour: parseInt(document.getElementById('sim-hour').value),
+        weather_code: parseInt(document.getElementById('sim-weather').value),
+        triage_priority: document.getElementById('sim-triage').value,
+        hospital_preference: document.getElementById('sim-hospital').value||null,
+        top_n:5
+      })
+    });
+    const data = await res.json();
+    if (data.error && !data.route_candidates?.length) {
+      out.innerHTML=`<div class="err-msg">Error: ${data.error}</div>`; return;
+    }
+    const rs=data.risk_summary||{}, rec=data.recommendation||'', routes=data.route_candidates||[];
+    const cScore=s=>s<0.25?'var(--c-green)':s<0.45?'var(--c-orange)':'var(--c-red)';
+    out.innerHTML=`
+      <div class="sim-header">
+        <div style="font-size:0.85rem;color:var(--c-muted)">${document.getElementById('sim-city').value} | ${document.getElementById('sim-hour').value}:00 | Weather: ${data.inputs?.weather_description||document.getElementById('sim-weather').value}</div>
+      </div>
+      <div class="sim-rec">${rec}</div>
+      <div class="risk-pills">
+        ${badge('⚠️ Weather: '+(rs.weather_risk||'?'),'red')}
+        ${badge('🕐 Time: '+(rs.time_risk||'?'),'yellow')}
+        ${badge('🚑 Priority: '+(rs.dispatch_urgency||rs.triage_severity||'?'),'blue')}
+      </div>
+      ${routes.length?`<div class="route-grid">${routes.map((r,i)=>`
+        <div class="route-card ${i===0?'best':''}">
+          <div class="route-rank">#${i+1}${i===0?' ← BEST':''}</div>
+          <div class="route-seg">Seg ${r.segment_id}</div>
+          <div class="route-score" style="color:${cScore(r.total_score)}">Score: ${r.total_score?.toFixed(4)}</div>
+          <div class="route-details">
+            Speed: ${r.mean_speed_kmph||'?'} km/h<br>
+            Wait: ${r.mean_wait_s||'?'} s<br>
+            Type: ${r.cluster_label||'—'}
+          </div>
+        </div>`).join('')}</div>`:'<div style="color:var(--c-muted);padding:1rem">No candidates. Load warehouse first.</div>'}
+      ${data.hospital_recommendations?.length?`
+        <div style="margin-top:1.5rem;font-size:0.85rem;font-weight:600;color:var(--c-secondary);margin-bottom:0.5rem">Hospital Readiness:</div>
+        <table class="data-table"><thead><tr><th>Code</th><th>Type</th><th>Total Dispatches</th></tr></thead>
+        <tbody>${data.hospital_recommendations.map(h=>`<tr><td>${h.hospital_code}</td><td>${h.facility_type}</td><td>${fmt(h.dispatches_today||h.total_dispatches)}</td></tr>`).join('')}</tbody></table>`:''}`;
+  } catch(e) {
+    out.innerHTML=`<div class="err-msg">Simulation failed: ${e.message}</div>`;
+  } finally {
+    btn.disabled=false; btn.textContent='🚑 Run Simulation';
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+//  ROUTE SIMULATOR (Dynamic 741+ Hospital Destinations)
+// ════════════════════════════════════════════════════════
+var allRSimHospitals = [];
+var rsimHospMap = {};
+
+async function initRSimHospitals() {
+  var selectEl = document.getElementById('rsim-dest');
+  var countEl  = document.getElementById('rsim-dest-count');
+  if (!selectEl) return;
+
+  try {
+    var res  = await fetch('/api/destination_hospitals');
+    var data = await res.json();
+    var list = data.hospitals || [];
+    if (list.length) {
+      allRSimHospitals = list;
+      rsimHospMap = {};
+      list.forEach(function(h) {
+        rsimHospMap[h.hospital_code] = h;
+        rsimHospMap[h.facility_name] = h;
+      });
+      renderRSimHospitalOptions(allRSimHospitals);
+      if (countEl) countEl.textContent = '✓ ' + list.length + ' hospitals loaded';
+    }
+  } catch(e) {
+    if (countEl) countEl.textContent = 'Using standard hospital set';
+  }
+  onRSimRouteChanged();
+}
+
+function renderRSimHospitalOptions(list, filterTerm) {
+  var selectEl = document.getElementById('rsim-dest');
+  if (!selectEl) return;
+
+  var currentVal = selectEl.value;
+  var term = (filterTerm || '').trim().toLowerCase();
+
+  var filtered = list.filter(function(h) {
+    if (!term) return true;
+    var name = (h.facility_name || '').toLowerCase();
+    var code = (h.hospital_code || '').toLowerCase();
+    var type = (h.facility_type || '').toLowerCase();
+    var ward = (h.ward_name || '').toLowerCase();
+    return name.includes(term) || code.includes(term) || type.includes(term) || ward.includes(term);
+  });
+
+  // Groupings
+  var emsHospitals   = [];
+  var majorHospitals = [];
+  var maternity      = [];
+  var otherClinics   = [];
+
+  filtered.forEach(function(h) {
+    var code = h.hospital_code || '';
+    var type = (h.facility_type || '').toLowerCase();
+    var beds = h.total_beds || 0;
+
+    if (['H001','H002','H003','H004'].includes(code)) {
+      emsHospitals.push(h);
+    } else if (beds >= 50 || type.includes('general') || type.includes('multi') || type.includes('infectious')) {
+      majorHospitals.push(h);
+    } else if (type.includes('maternity')) {
+      maternity.push(h);
+    } else {
+      otherClinics.push(h);
+    }
+  });
+
+  var html = '';
+
+  if (emsHospitals.length) {
+    html += '<optgroup label="🚨 Major EMS Centers (H001–H004)">';
+    emsHospitals.forEach(function(h) {
+      html += '<option value="' + h.facility_name + '">' + h.hospital_code + ' — ' + h.facility_name + '</option>';
+    });
+    html += '</optgroup>';
+  }
+
+  if (majorHospitals.length) {
+    html += '<optgroup label="🏥 Major General & Multi-Specialty Hospitals (' + majorHospitals.length + ')">';
+    majorHospitals.forEach(function(h) {
+      var bedStr = h.total_beds ? ' (' + h.total_beds + ' beds)' : '';
+      var wardStr = h.ward_name ? ' · ' + h.ward_name : '';
+      html += '<option value="' + h.facility_name + '">' + h.facility_name + bedStr + wardStr + '</option>';
+    });
+    html += '</optgroup>';
+  }
+
+  if (maternity.length) {
+    html += '<optgroup label="👶 Maternity & Specialized Centers (' + maternity.length + ')">';
+    maternity.forEach(function(h) {
+      var bedStr = h.total_beds ? ' (' + h.total_beds + ' beds)' : '';
+      html += '<option value="' + h.facility_name + '">' + h.facility_name + bedStr + '</option>';
+    });
+    html += '</optgroup>';
+  }
+
+  if (otherClinics.length) {
+    html += '<optgroup label="🩺 Municipal & Private Dispensaries (' + otherClinics.length + ')">';
+    otherClinics.slice(0, 100).forEach(function(h) {
+      html += '<option value="' + h.facility_name + '">' + h.facility_name + (h.ward_name ? ' (' + h.ward_name + ')' : '') + '</option>';
+    });
+    if (otherClinics.length > 100) {
+      html += '<option disabled>… use search box to filter ' + (otherClinics.length - 100) + ' more facilities</option>';
+    }
+    html += '</optgroup>';
+  }
+
+  // Hub Cities Group
+  html += '<optgroup label="🏙️ Hub Cities">';
+  ['Pune','Mumbai','Nashik','Kolhapur','Solapur'].forEach(function(c) {
+    html += '<option value="' + c + '">' + c + ' City Center</option>';
+  });
+  html += '</optgroup>';
+
+  selectEl.innerHTML = html;
+
+  // Restore previous value if still in options
+  if (currentVal) {
+    var exists = false;
+    for (var i = 0; i < selectEl.options.length; i++) {
+      if (selectEl.options[i].value === currentVal) {
+        selectEl.selectedIndex = i;
+        exists = true;
+        break;
+      }
+    }
+    if (!exists && selectEl.options.length) {
+      selectEl.selectedIndex = 0;
+    }
+  }
+}
+
+function filterRSimHospitals(term) {
+  renderRSimHospitalOptions(allRSimHospitals, term);
+  onRSimRouteChanged();
+}
+
+function onRSimRouteChanged() {
+  var src      = (document.getElementById('rsim-source') || {}).value || 'Satara';
+  var destEl   = document.getElementById('rsim-dest');
+  var dest     = (destEl || {}).value || 'Pune';
+  var noteEl   = document.getElementById('rsim-route-note');
+  var badgeEl  = document.getElementById('rsim-hosp-badge');
+
+  var hosp = rsimHospMap[dest] || null;
+
+  if (badgeEl) {
+    if (hosp) {
+      badgeEl.style.display = 'block';
+      var beds = hosp.total_beds != null ? hosp.total_beds + ' beds' : 'Bed count N/A';
+      var eBeds = hosp.emergency_beds != null ? hosp.emergency_beds + ' emerg beds' : '';
+      var amb = hosp.ambulance_count != null ? hosp.ambulance_count + ' ambulances' : '';
+      var own = hosp.ownership_class ? hosp.ownership_class : 'Healthcare Facility';
+      var loc = [hosp.ward_name, hosp.zone_no ? 'Zone ' + hosp.zone_no : ''].filter(Boolean).join(', ');
+
+      badgeEl.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:0.4rem 1rem;align-items:center">' +
+        '<span>🏥 <strong>' + hosp.facility_name + '</strong></span>' +
+        '<span class="badge badge-blue" style="font-size:0.7rem">' + (hosp.facility_type || own) + '</span>' +
+        (hosp.total_beds ? '<span style="color:var(--c-green);font-weight:600">🛏️ ' + beds + '</span>' : '') +
+        (eBeds ? '<span style="color:var(--c-red)">🚨 ' + eBeds + '</span>' : '') +
+        (amb ? '<span style="color:var(--c-yellow)">🚑 ' + amb + '</span>' : '') +
+        (loc ? '<span style="color:var(--c-muted)">📍 ' + loc + '</span>' : '') +
+        '</div>';
+    } else {
+      badgeEl.style.display = 'none';
+    }
+  }
+
+  if (noteEl) {
+    if (src === 'Satara') {
+      var destName = hosp ? hosp.facility_name : dest;
+      noteEl.innerHTML = '✅ <strong style="color:var(--c-green)">Satara → ' + destName + '</strong> — Full 3-route corridor analysis available (Wai bypass · Khandala Ghat · NH48 Direct). All traffic, weather &amp; hospital readiness auto-derived from the warehouse.';
+    } else {
+      noteEl.innerHTML = 'ℹ️ <strong>' + src + ' → ' + dest + '</strong> — Satara → Pune corridor has the most comprehensive high-resolution historical telemetry.';
+    }
+  }
+}
+
+function _rsBadge(text, cls) {
+  var map = { 'High':'badge-red','Low':'badge-green','Medium':'badge-yellow',
+              'Free Flow':'badge-green','Moderate':'badge-yellow',
+              'Heavy':'badge-red','Gridlock':'badge-red',
+              'Severe':'badge-red','green':'badge-green','yellow':'badge-yellow','red':'badge-red' };
+  var bc = map[text] || map[cls] || 'badge-blue';
+  return '<span class="badge ' + bc + '">' + text + '</span>';
+}
+
+function _rsScoreColor(s) {
+  return s < 0.25 ? 'var(--c-green)' : s < 0.50 ? 'var(--c-orange)' : 'var(--c-red)';
+}
+
+function _rsPct(v) {
+  if (v == null) return '—';
+  return (parseFloat(v) * 100).toFixed(2) + '%';
+}
+
+function _rsMetricsHTML(m) {
+  if (!m || !m.accuracy) return '<div style="color:var(--c-muted);font-size:0.8rem">Run simulation to compute metrics.</div>';
+  var cm = m.confusion_matrix || {};
+  var labels = cm.labels || [];
+  var matrix = cm.matrix || [];
+  var pcm = m.per_class_metrics || {};
+
+  var cmHTML = '';
+  if (labels.length && matrix.length) {
+    cmHTML = '<div style="margin-top:0.75rem"><div style="font-size:0.8rem;font-weight:600;margin-bottom:0.4rem">Confusion Matrix:</div>' +
+      '<div style="overflow-x:auto"><table class="data-table" style="font-size:0.75rem">' +
+      '<thead><tr><th>Actual \\ Pred</th>' + labels.map(function(l){ return '<th style="color:var(--c-cyan)">' + l + '</th>'; }).join('') + '</tr></thead>' +
+      '<tbody>' + matrix.map(function(row, i) {
+        return '<tr><td><strong>' + labels[i] + '</strong></td>' + row.map(function(v, j) {
+          var ok = i === j;
+          return '<td style="background:' + (ok ? 'rgba(16,185,129,0.18)' : (v > 0 ? 'rgba(239,68,68,0.08)' : '')) +
+            ';font-weight:' + (ok ? '700' : '400') + ';color:' + (ok ? 'var(--c-green)' : '') + '">' + v + '</td>';
+        }).join('') + '</tr>';
+      }).join('') + '</tbody></table></div></div>';
+  }
+
+  var pcHTML = '';
+  if (Object.keys(pcm).length) {
+    pcHTML = '<div style="margin-top:0.75rem"><div style="font-size:0.8rem;font-weight:600;margin-bottom:0.4rem">Per-class Metrics:</div>' +
+      '<table class="data-table" style="font-size:0.75rem"><thead><tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr></thead><tbody>' +
+      Object.entries(pcm).map(function(e) {
+        var cls = e[0], v = e[1];
+        var clr = cls === 'High' ? 'var(--c-red)' : cls === 'Low' ? 'var(--c-green)' : 'var(--c-orange)';
+        return '<tr><td><strong style="color:' + clr + '">' + cls + '</strong></td>' +
+          '<td>' + _rsPct(v.precision) + '</td><td>' + _rsPct(v.recall) + '</td>' +
+          '<td>' + _rsPct(v.f1) + '</td><td>' + fmt(v.support) + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  var hp = m.hyperparameters || {};
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3rem 1.5rem;font-size:0.82rem;margin-bottom:0.5rem">' +
+    '<div class="wh-row"><span>Accuracy</span><span style="color:var(--c-green);font-weight:700">' + _rsPct(m.accuracy) + '</span></div>' +
+    '<div class="wh-row"><span>Precision (w)</span><span>' + _rsPct(m.precision_weighted) + '</span></div>' +
+    '<div class="wh-row"><span>Recall (w)</span><span>' + _rsPct(m.recall_weighted) + '</span></div>' +
+    '<div class="wh-row"><span>F1 (weighted)</span><span>' + _rsPct(m.f1_weighted) + '</span></div>' +
+    '<div class="wh-row"><span>CV Accuracy</span><span>' + _rsPct(m.cv_accuracy_mean) + ' ± ' + _rsPct(m.cv_accuracy_std) + '</span></div>' +
+    (m.train_time_s != null ? '<div class="wh-row"><span>Train Time</span><span>' + m.train_time_s + 's</span></div>' : '') +
+    '<div class="wh-row"><span>Train / Test</span><span>' + fmt(m.train_size) + ' / ' + fmt(m.test_size) + '</span></div>' +
+    (Object.keys(hp).length ? '<div class="wh-row"><span>Hyperparams</span><span>' + Object.entries(hp).map(function(e){return e[0]+':'+e[1];}).join(', ') + '</span></div>' : '') +
+    '</div>' + cmHTML + pcHTML;
+}
+
+async function runRouteSimulation() {
+  var btn     = document.getElementById('btn-rsim');
+  var running = document.getElementById('rsim-running');
+  var results = document.getElementById('rsim-results');
+  var ctxCard = document.getElementById('rsim-context-card');
+  var tpEl    = document.getElementById('rsim-traffic-params');
+  var wxEl    = document.getElementById('rsim-weather-params');
+
+  if (btn)     { btn.disabled = true; btn.textContent = '⏳ Computing…'; }
+  if (running) { running.style.display = 'flex'; }
+  if (results) { results.style.display = 'none'; }
+
+  var src      = (document.getElementById('rsim-source')     || {}).value || 'Satara';
+  var dest     = (document.getElementById('rsim-dest')       || {}).value || 'Pune';
+  var eType    = (document.getElementById('rsim-emerg-type') || {}).value || 'Other';
+  var severity = (document.getElementById('rsim-severity')   || {}).value || 'Major';
+  var triage   = (document.getElementById('rsim-triage')     || {}).value || 'Red';
+  var urgency  = parseFloat((document.getElementById('rsim-urgency') || {}).value || '8');
+  var model    = (document.getElementById('rsim-model')      || {}).value || 'random_forest';
+  var wxVal    = (document.getElementById('rsim-weather')    || {}).value;
+  var hrVal    = (document.getElementById('rsim-hour')       || {}).value;
+
+  var body = { source: src, destination: dest, emergency_type: eType,
+    severity: severity, triage_level: triage, urgency_score: urgency, model: model };
+  if (wxVal) body.weather_override = parseInt(wxVal);
+  if (hrVal !== '' && hrVal !== null && hrVal !== undefined) body.hour = parseInt(hrVal);
+
+  try {
+    var res  = await fetch('/api/simulate_route', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    var data = await res.json();
+
+    if (data.error) {
+      if (results) { results.style.display = 'block'; results.innerHTML = '<div class="err-msg">❌ Simulation error: ' + data.error + '</div>'; }
+      return;
+    }
+
+    var ctx    = data.route_context    || {};
+    var routes = data.candidate_routes || [];
+    var best   = data.recommended_route || (routes[0] || {});
+    var reason = data.recommendation_reason || '';
+    var ml     = data.ml_prediction   || {};
+    var avail  = data.db_available    || {};
+    var hosp   = ctx.destination_hospital || rsimHospMap[dest] || null;
+
+    // ── Update Traffic Parameters panel ─────────────────────────────────
+    if (tpEl && routes.length) {
+      tpEl.innerHTML = '<div style="font-size:0.78rem;color:var(--c-muted);margin-bottom:0.6rem">Derived from <code>warehouse.fact_traffic_performance</code> — VANET S001–S500 historical aggregates (congestion percentile tiers).</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:0.5rem 1rem">' +
+        routes.map(function(r) {
+          return '<div style="border-left:3px solid ' + (r.rank===1?'var(--c-green)':'var(--c-surface2)') + ';padding-left:0.65rem;font-size:0.8rem">' +
+            '<div style="font-weight:700;color:' + (r.rank===1?'var(--c-green)':'var(--c-text)') + ';margin-bottom:0.2rem">Route ' + r.route_id + (r.rank===1?' ✓':'') + '</div>' +
+            '<div>Speed: <strong>' + r.avg_speed_kmph + ' km/h</strong></div>' +
+            '<div>Congestion: <strong>' + (r.congestion||0).toFixed(3) + '</strong></div>' +
+            '<div>Wait: <strong>' + r.avg_wait_s + ' s</strong></div>' +
+            '<div>Incidents: <strong>' + (r.mean_incidents||0).toFixed(3) + '</strong></div>' +
+            '<div>Density: <strong>' + r.vehicle_density + ' veh/km</strong></div>' +
+            '<div>Flow: <strong>' + r.vehicle_flow_veh_hr + ' veh/hr</strong></div>' +
+            '<div>Queue: <strong>' + r.queue_length_veh + ' veh</strong></div>' +
+            '<div>Occupancy: <strong>' + ((r.occupancy||0)*100).toFixed(1) + '%</strong></div>' +
+            '</div>';
+        }).join('') + '</div>';
+    }
+
+    // ── Update Weather panel ─────────────────────────────────────────────
+    if (wxEl && ctx.weather_desc) {
+      wxEl.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0.3rem 1.5rem;font-size:0.82rem;margin-top:0.4rem">' +
+        '<div>Condition: <strong>' + ctx.weather_desc + ' (WMO ' + ctx.weather_code + ')</strong></div>' +
+        (ctx.temperature_c != null ? '<div>Temperature: <strong>' + ctx.temperature_c + '°C</strong> <em style="font-size:0.7rem;color:var(--c-muted)">(DB avg)</em></div>' : '<div style="color:var(--c-muted)">Temperature: N/A</div>') +
+        (ctx.wind_kmph != null ? '<div>Wind: <strong>' + ctx.wind_kmph + ' km/h</strong></div>' : '') +
+        (ctx.precip_mm != null ? '<div>Precipitation: <strong>' + ctx.precip_mm + ' mm/day</strong></div>' : '') +
+        '<div>Weather Penalty: <strong>' + ctx.weather_penalty + '</strong></div>' +
+        (routes[0] ? '<div>Visibility: <strong>' + routes[0].visibility_km + ' km</strong></div>' : '') +
+        (routes[0] ? '<div>Rain: <strong>' + routes[0].rain_intensity_mmph + ' mm/h</strong></div>' : '') +
+        '</div>';
+    }
+
+    // ── DB Context card ──────────────────────────────────────────────────
+    if (ctxCard) {
+      ctxCard.style.display = 'block';
+      var ccEl = document.getElementById('rsim-context-content');
+      if (ccEl) {
+        var isPk = ctx.is_peak;
+        var hospHTML = '';
+        if (hosp) {
+          hospHTML = '<div style="margin-bottom:0.75rem;padding:0.6rem 0.85rem;background:rgba(59,130,246,0.08);border-left:3px solid var(--c-blue);border-radius:6px;font-size:0.82rem">' +
+            '<div style="font-weight:700;color:var(--c-blue);margin-bottom:0.25rem">🏥 Destination Hospital: ' + hosp.facility_name + (hosp.hospital_code ? ' (' + hosp.hospital_code + ')' : '') + '</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:0.3rem 1.5rem;color:var(--c-text);font-size:0.79rem">' +
+            '<div>Type: <strong>' + (hosp.facility_type || 'Hospital') + '</strong></div>' +
+            '<div>Ownership: <strong>' + (hosp.ownership_class || 'Public/Trust') + '</strong></div>' +
+            (hosp.total_beds != null ? '<div>Total Beds: <strong style="color:var(--c-green)">' + hosp.total_beds + '</strong></div>' : '') +
+            (hosp.emergency_beds != null ? '<div>Emergency Beds: <strong style="color:var(--c-red)">' + hosp.emergency_beds + '</strong></div>' : '') +
+            (hosp.ambulance_count != null ? '<div>Ambulances: <strong>' + hosp.ambulance_count + '</strong></div>' : '') +
+            (hosp.ward_name ? '<div>Ward: <strong>' + hosp.ward_name + '</strong></div>' : '') +
+            '</div></div>';
+        }
+
+        ccEl.innerHTML = hospHTML +
+          '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.35rem 2rem;font-size:0.82rem;margin-bottom:0.65rem">' +
+          '<div class="wh-row"><span>Corridor</span><span><strong>' + ctx.source + ' → ' + (hosp ? hosp.facility_name : ctx.destination) + '</strong></span></div>' +
+          '<div class="wh-row"><span>Hour</span><span>' + ctx.hour + ':00 ' + (isPk ? '<span class="badge badge-red" style="font-size:0.7rem">PEAK</span>' : '<span class="badge badge-green" style="font-size:0.7rem">OFF-PEAK</span>') + '</span></div>' +
+          '<div class="wh-row"><span>Weather</span><span>' + ctx.weather_desc + ' (code ' + ctx.weather_code + ')</span></div>' +
+          '<div class="wh-row"><span>Weather Penalty</span><span>' + ctx.weather_penalty + '</span></div>' +
+          (ctx.temperature_c != null ? '<div class="wh-row"><span>Avg Temp (DB)</span><span>' + ctx.temperature_c + '°C</span></div>' : '') +
+          '<div class="wh-row"><span>Triage Level</span><span>' + ctx.triage_level.toUpperCase() + '</span></div>' +
+          '<div class="wh-row"><span>Emergency Type</span><span>' + ctx.emergency_type + '</span></div>' +
+          '<div class="wh-row"><span>Severity</span><span>' + ctx.severity + '</span></div>' +
+          '<div class="wh-row"><span>Urgency Score</span><span>' + ctx.urgency_score + ' / 10</span></div>' +
+          '<div class="wh-row"><span>Urgency Multiplier</span><span><strong>' + ctx.urgency_mult + '×</strong></span></div>' +
+          (ctx.db_accident_avg_risk != null ? '<div class="wh-row"><span>Avg Accident Risk (DB)</span><span>' + ctx.db_accident_avg_risk + '</span></div>' : '') +
+          (ctx.db_peak_risk != null ? '<div class="wh-row"><span>Peak Hour Risk (DB)</span><span>' + ctx.db_peak_risk + '</span></div>' : '') +
+          '</div>' +
+          '<details style="font-size:0.75rem;color:var(--c-muted)"><summary style="cursor:pointer">📝 Data Derivation Note</summary>' +
+          '<div style="margin-top:0.4rem;line-height:1.6">' + (ctx._derivation_note || '') + '</div></details>';
+      }
+    }
+
+    // ── Time derived note ────────────────────────────────────────────────
+    var tdEl = document.getElementById('rsim-time-derived');
+    if (tdEl && ctx.hour !== undefined) {
+      var d = new Date(); var dow = d.toLocaleDateString('en-IN', {weekday:'long'});
+      var isWE = [0,6].includes(d.getDay());
+      tdEl.textContent = 'Hour ' + ctx.hour + ':00 · ' + dow + ' · ' + (isWE?'Weekend':'Weekday') + ' · ' + (ctx.is_peak ? 'Peak Hour (morning/evening rush)' : 'Off-Peak');
+    }
+
+    // ── Route Candidate Cards ────────────────────────────────────────────
+    var cardsEl = document.getElementById('rsim-route-cards');
+    var badgeRouteEl = document.getElementById('rsim-route-badge');
+    if (badgeRouteEl) badgeRouteEl.textContent = routes.length + ' candidates · ' + src + ' → ' + (hosp ? hosp.facility_name : dest);
+
+    if (cardsEl) {
+      cardsEl.innerHTML = routes.map(function(r) {
+        var isBest = r.rank === 1;
+        var sc = _rsScoreColor(r.adjusted_score);
+        var fac = r.factors || {};
+        var facHTML = Object.entries(fac).map(function(e) {
+          return '<div style="display:flex;justify-content:space-between"><span>' + e[0].replace(/_/g,' ') + '</span><strong>' + (e[1]*100).toFixed(1) + '%</strong></div>';
+        }).join('');
+        return '<div style="position:relative;border:2px solid ' + (isBest?'var(--c-green)':'var(--c-surface2)') +
+          ';border-radius:14px;padding:1.1rem 1.1rem 0.9rem;background:var(--c-surface)">' +
+          (isBest ? '<div style="position:absolute;top:-11px;right:12px;background:var(--c-green);color:#fff;font-size:0.7rem;font-weight:700;padding:2px 10px;border-radius:20px;letter-spacing:0.04em">🏆 RECOMMENDED</div>' : '') +
+          '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">' +
+          '<span style="font-size:1.05rem;font-weight:700;color:' + (isBest?'var(--c-green)':'var(--c-text)') + '">Route ' + r.route_id + '</span>' +
+          _rsBadge(r.traffic_level, '') + _rsBadge(r.delay_risk + ' Delay', r.delay_risk) +
+          '</div>' +
+          '<div style="font-size:0.82rem;font-weight:600;margin-bottom:0.1rem">' + r.route_name + '</div>' +
+          '<div style="font-size:0.74rem;color:var(--c-muted);margin-bottom:0.7rem">' + r.highway + ' · ' + r.description + '</div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.25rem 1rem;font-size:0.79rem;margin-bottom:0.7rem">' +
+          '<div>📏 Distance: <strong>' + r.distance_km + ' km</strong></div>' +
+          '<div>⏱️ Travel: <strong>' + r.est_travel_min + ' min</strong></div>' +
+          '<div>🚑 Emerg ETA: <strong style="color:' + (isBest?'var(--c-green)':'var(--c-text)') + '">' + r.emerg_travel_min + ' min</strong></div>' +
+          '<div>🏎️ Speed: <strong>' + r.avg_speed_kmph + ' km/h</strong></div>' +
+          '<div>👁️ Visibility: <strong>' + r.visibility_km + ' km</strong></div>' +
+          '<div>🌧️ Rain: <strong>' + r.rain_intensity_mmph + ' mm/h</strong></div>' +
+          '<div>⚠️ Acc. Risk: <strong>' + r.accident_risk + '</strong></div>' +
+          '<div>🌦️ Weather: ' + _rsBadge(r.weather_impact, r.weather_impact) + '</div>' +
+          '</div>' +
+          '<div style="font-size:0.79rem;margin-bottom:0.35rem">' +
+          '<div style="display:flex;justify-content:space-between"><span>Route Score</span><strong style="color:' + sc + '">' + r.adjusted_score.toFixed(4) + '</strong></div>' +
+          '<div class="risk-bar-wrap"><div class="risk-bar"><div style="width:' + Math.round(r.adjusted_score*100) + '%;background:' + sc + ';height:100%;border-radius:3px"></div></div></div>' +
+          '</div>' +
+          '<details style="font-size:0.74rem;color:var(--c-muted);margin-top:0.4rem"><summary style="cursor:pointer">Factor breakdown</summary>' +
+          '<div style="margin-top:0.35rem;display:grid;gap:0.18rem">' + facHTML + '</div></details>' +
+          '</div>';
+      }).join('');
+    }
+
+    // ── Comparison Table ─────────────────────────────────────────────────
+    var tableEl = document.getElementById('rsim-comparison-table');
+    if (tableEl && routes.length) {
+      var cols = [
+        ['Route','route_id'],['Name','route_name'],['Dist','distance_km'],
+        ['Est Travel','est_travel_min'],['Emerg ETA','emerg_travel_min'],
+        ['Speed','avg_speed_kmph'],['Traffic','traffic_level'],
+        ['Congestion','congestion'],['Delay Risk','delay_risk'],
+        ['Acc. Risk','accident_risk'],['Weather','weather_impact'],
+        ['Score','adjusted_score'],
+      ];
+      tableEl.innerHTML = '<table class="data-table"><thead><tr>' +
+        cols.map(function(c) { return '<th>' + c[0] + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        routes.map(function(r) {
+          return '<tr style="' + (r.rank===1?'background:rgba(16,185,129,0.07)':'') + '">' +
+            cols.map(function(col) {
+              var v = r[col[1]]; var k = col[1];
+              if (k==='route_id') return '<td><strong style="color:' + (r.rank===1?'var(--c-green)':'') + '">Route ' + v + (r.rank===1?' 🏆':'') + '</strong></td>';
+              if (k==='traffic_level') return '<td>' + _rsBadge(v, '') + '</td>';
+              if (k==='delay_risk') return '<td>' + _rsBadge(v + ' Delay', v) + '</td>';
+              if (k==='weather_impact') return '<td>' + _rsBadge(v, v) + '</td>';
+              if (k==='adjusted_score') return '<td><strong style="color:' + _rsScoreColor(v) + '">' + (typeof v==='number'?v.toFixed(4):v) + '</strong></td>';
+              if (k==='est_travel_min'||k==='emerg_travel_min') return '<td><strong>' + v + ' min</strong></td>';
+              if (typeof v==='number') return '<td>' + (v.toFixed?v.toFixed(2):v) + '</td>';
+              return '<td>' + (v||'—') + '</td>';
+            }).join('') + '</tr>';
+        }).join('') + '</tbody></table>';
+    }
+
+    // ── Recommendation ───────────────────────────────────────────────────
+    var recEl = document.getElementById('rsim-recommendation');
+    if (recEl && best.route_id) {
+      recEl.innerHTML = '<div style="background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(6,182,212,0.08));border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:1rem;margin-bottom:0.7rem">' +
+        '<div style="font-size:0.98rem;font-weight:700;color:var(--c-green);margin-bottom:0.25rem">🏆 Route ' + best.route_id + ' — ' + best.route_name + '</div>' +
+        '<div style="font-size:0.8rem;color:var(--c-muted);margin-bottom:0.5rem">' + best.highway + (hosp ? ' → ' + hosp.facility_name : '') + '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.25rem;font-size:0.83rem">' +
+        '<div>Distance: <strong>' + best.distance_km + ' km</strong></div>' +
+        '<div>Emerg ETA: <strong style="color:var(--c-green)">' + best.emerg_travel_min + ' min</strong></div>' +
+        '<div>Traffic: ' + _rsBadge(best.traffic_level, '') + '</div>' +
+        '<div>Delay: ' + _rsBadge(best.delay_risk + ' Risk', best.delay_risk) + '</div>' +
+        '<div>Acc. Risk: <strong>' + best.accident_risk + '</strong></div>' +
+        '<div>Score: <strong style="color:' + _rsScoreColor(best.adjusted_score) + '">' + (best.adjusted_score||0).toFixed(4) + '</strong></div>' +
+        '</div></div>' +
+        '<div style="font-size:0.79rem;line-height:1.6;background:var(--c-surface2);border-radius:8px;padding:0.65rem;border-left:3px solid var(--c-green)">' +
+        '<strong style="color:var(--c-secondary)">Reason:</strong> <em>' + reason + '</em></div>';
+    }
+
+    // ── ML Prediction + Model Metrics ────────────────────────────────────
+    var mlEl = document.getElementById('rsim-ml-result');
+    if (mlEl) {
+      var pred  = ml.predicted_class || best.delay_risk || '?';
+      var proba = ml.probabilities   || {};
+      mlEl.innerHTML =
+        '<div style="font-size:1rem;font-weight:700;margin-bottom:0.6rem;display:flex;align-items:center;gap:0.5rem">' +
+        'Delay Risk: ' + _rsBadge(pred, pred) +
+        '</div>' +
+        '<div class="wh-row" style="margin-bottom:0.4rem"><span>Model</span><span style="font-size:0.78rem;color:var(--c-cyan)">' + (ml.model_used||'Random Forest') + '</span></div>' +
+        Object.entries(proba).map(function(e) {
+          var cls = e[0], p = e[1];
+          var clr = cls==='High'?'var(--c-red)':cls==='Medium'?'var(--c-orange)':'var(--c-green)';
+          return '<div style="margin:0.3rem 0;font-size:0.8rem">' +
+            '<div style="display:flex;justify-content:space-between"><span>' + cls + '</span><strong>' + (p*100).toFixed(1) + '%</strong></div>' +
+            '<div class="risk-bar-wrap"><div class="risk-bar"><div style="width:' + Math.round(p*100) + '%;background:' + clr + ';height:100%;border-radius:3px"></div></div></div>' +
+            '</div>';
+        }).join('') +
+        '<div style="font-size:0.75rem;color:var(--c-muted);margin-top:0.5rem;line-height:1.5">' + (ml.explanation||'') + '</div>' +
+        '<details style="margin-top:0.75rem"><summary style="cursor:pointer;font-size:0.8rem;font-weight:600;color:var(--c-secondary)">📊 Model Comparison Metrics</summary>' +
+        '<div style="margin-top:0.5rem">' + _rsMetricsHTML(ml.model_metrics) + '</div>' +
+        '</details>' +
+        '<div style="font-size:0.7rem;color:var(--c-muted);margin-top:0.5rem;border-top:1px solid var(--c-surface2);padding-top:0.4rem">' +
+        '⚠️ <em>Academic model. delay_risk is DERIVED from congestion_label — not ground-truth. Do not use for real dispatch.</em></div>';
+    }
+
+    // ── Data Availability ────────────────────────────────────────────────
+    var availEl = document.getElementById('rsim-data-avail');
+    if (availEl) {
+      var items = [
+        ['Hospital Infrastructure & Beds (from dim_hospital)', avail.hospital_infrastructure],
+        ['Traffic Telemetry (speed, congestion, wait, incidents, flow, queue, density, occupancy)', avail.traffic_telemetry],
+        ['Historical Weather (temperature, wind, precipitation, visibility)', avail.weather_historical],
+        ['Accident Risk Score (from fact_road_accidents)', avail.accident_risk],
+        ['Road Name', avail.road_name],
+        ['Number of Lanes', avail.lanes],
+        ['Speed Limit (km/h)', avail.speed_limit],
+        ['Traffic Signal', avail.has_traffic_signal],
+        ['Construction Status', avail.construction_status],
+        ['Real-Time Route Distance (GPS)', avail.route_distance_realtime],
+      ];
+      availEl.innerHTML = '<div style="font-size:0.8rem;color:var(--c-muted);margin-bottom:0.6rem">Parameters auto-derived from the warehouse vs. parameters not present in the source schema:</div>' +
+        '<div style="display:grid;gap:0.35rem">' +
+        items.map(function(item) {
+          var ok = item[1];
+          return '<div style="display:flex;align-items:center;gap:0.65rem;font-size:0.8rem;padding:0.25rem 0;border-bottom:1px solid var(--c-surface2)">' +
+            '<span style="font-size:0.9rem">' + (ok?'✅':'❌') + '</span>' +
+            '<span style="' + (ok?'':'color:var(--c-muted)') + '">' + item[0] + '</span>' +
+            '<span style="margin-left:auto;font-size:0.71rem;color:' + (ok?'var(--c-green)':'var(--c-red)') + '">' + (ok?'Available from DB':'Not in source schema') + '</span>' +
+            '</div>';
+        }).join('') + '</div>' +
+        '<div style="margin-top:0.6rem;font-size:0.74rem;color:var(--c-muted);line-height:1.6">' +
+        'Sources: <code>dim_hospital</code> (' + (allRSimHospitals.length || 741) + ' facilities), <code>fact_traffic_performance</code> (VANET S001–S500), ' +
+        '<code>fact_daily_weather</code>, <code>fact_road_accidents</code>.</div>';
+    }
+
+    if (results) results.style.display = 'block';
+
+  } catch(e) {
+    if (results) {
+      results.style.display = 'block';
+      results.innerHTML = '<div class="err-msg">❌ Simulation failed: ' + e.message + '</div>';
+    }
+  } finally {
+    if (btn)     { btn.disabled = false; btn.textContent = '🚑 Compute Route Intelligence'; }
+    if (running) { running.style.display = 'none'; }
+  }
+}
+
+function resetRouteSimulator() {
+  ['rsim-source','rsim-dest','rsim-emerg-type','rsim-severity','rsim-triage','rsim-model','rsim-weather'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.selectedIndex = 0;
+  });
+  var urg = document.getElementById('rsim-urgency');
+  if (urg) urg.value = '8';
+  var hr = document.getElementById('rsim-hour');
+  if (hr) hr.value = '';
+  var sSearch = document.getElementById('rsim-dest-search');
+  if (sSearch) sSearch.value = '';
+  renderRSimHospitalOptions(allRSimHospitals, '');
+  var results = document.getElementById('rsim-results');
+  var ctx     = document.getElementById('rsim-context-card');
+  if (results) results.style.display = 'none';
+  if (ctx)     ctx.style.display     = 'none';
+  var tpEl = document.getElementById('rsim-traffic-params');
+  if (tpEl) tpEl.innerHTML = 'Run simulation to auto-fetch per-route traffic data from the warehouse (speed, congestion, density, wait, incidents, occupancy, flow, queue).';
+  var wxEl = document.getElementById('rsim-weather-params');
+  if (wxEl) wxEl.innerHTML = 'Temperature, wind, precipitation &amp; visibility auto-fetched from <code>warehouse.fact_daily_weather</code>. Road lanes, speed limit and construction status are <strong>not available</strong> in the source schema.';
+  onRSimRouteChanged();
+}
+
+// ════════════════════════════════════════════════════════
+//  ML TAB SWITCHER
+// ════════════════════════════════════════════════════════
+function setMlTab(tab) {
+  document.querySelectorAll('.ml-tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.ml-section').forEach(s => s.classList.remove('active'));
+  const btn = document.getElementById('ml-tab-' + tab);
+  const sec = document.getElementById('ml-sec-' + tab);
+  if (btn) btn.classList.add('active');
+  if (sec) sec.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════
+//  ML: RUN KMEANS (live API call)
+// ════════════════════════════════════════════════════════
+async function runKmeans() {
+  const btn = document.getElementById('btn-km-run');
+  const running = document.getElementById('km-running');
+  const resultsDiv = document.getElementById('km-results');
+  const prerunDiv = document.getElementById('km-prerun');
+  btn.disabled = true;
+  if (running) running.style.display = 'flex';
+
+  const k = parseInt(document.getElementById('km-k').value) || 4;
+  const features = Array.from(document.querySelectorAll('#km-features input:checked')).map(el => el.value);
+
+  try {
+    const res = await fetch('/api/clustering_run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ k, features })
+    });
+    const data = await res.json();
+    if (data.error) { alert('Clustering error: ' + data.error); return; }
+
+    // Show results
+    if (prerunDiv) prerunDiv.style.display = 'none';
+    if (resultsDiv) resultsDiv.style.display = 'block';
+
+    const sil = document.getElementById('km-sil');
+    if (sil) sil.textContent = `k=${data.k} | Silhouette: ${data.silhouette_score} | DB: ${data.davies_bouldin_score}`;
+
+    // Cluster cards
+    const cardsEl = document.getElementById('km-cluster-cards');
+    if (cardsEl && data.clusters) {
+      cardsEl.innerHTML = Object.entries(data.clusters).map(([ci, c], i) => `
+        <div class="cluster-card">
+          <div class="cluster-num" style="color:${COLORS[i]}">${ci}</div>
+          <div class="cluster-lbl">${c.label}</div>
+          <div class="cluster-cnt">${fmt(c.segment_count)} segments</div>
+          <div class="cluster-info">${(c.mean_speed||0).toFixed(1)} km/h · ${(c.mean_congestion||0).toFixed(3)}</div>
+        </div>`).join('');
+    }
+
+    // Elbow chart
+    if (data.elbow_k && data.elbow_inertia) {
+      mkChart('km-elbow-chart', 'line', data.elbow_k.map(k => 'k='+k),
+        [{ label: 'Inertia', data: data.elbow_inertia, borderColor: '#3b82f6',
+           backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.4 }],
+        { scales: { y: { beginAtZero: false } }, plugins: { legend: { display: false } } }
+      );
+    }
+
+    // Distribution chart
+    if (data.clusters) {
+      const entries = Object.entries(data.clusters);
+      mkChart('km-dist-chart', 'doughnut',
+        entries.map(([,c]) => c.label),
+        [{ data: entries.map(([,c]) => c.segment_count),
+           backgroundColor: COLORS.slice(0, entries.length),
+           borderWidth: 0, hoverOffset: 8 }]
+      );
+    }
+  } catch(e) {
+    alert('Clustering failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    if (running) running.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  ML: RUN APRIORI (live API call)
+// ════════════════════════════════════════════════════════
+async function runApriori() {
+  const btn = document.getElementById('btn-apr-run');
+  const running = document.getElementById('apr-running');
+  btn.disabled = true;
+  if (running) running.style.display = 'flex';
+
+  const support    = parseFloat(document.getElementById('apr-support').value) || 0.05;
+  const confidence = parseFloat(document.getElementById('apr-confidence').value) || 0.3;
+  const lift       = parseFloat(document.getElementById('apr-lift').value) || 1.0;
+
+  try {
+    const res = await fetch('/api/apriori_run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ min_support: support, min_confidence: confidence, min_lift: lift })
+    });
+    const data = await res.json();
+    const rules = Array.isArray(data) ? data : (data.rules || []);
+    const countEl = document.getElementById('apr-rule-count');
+    if (countEl) countEl.textContent = `${rules.length} rules found`;
+
+    const rulesEl = document.getElementById('ml-rules');
+    if (rulesEl) {
+      if (rules.length) {
+        rulesEl.innerHTML = `
+          <div class="rules-header"><span>Antecedents</span><span>→</span><span>Consequents</span><span>Support</span><span>Confidence</span><span>Lift</span></div>
+          ${rules.slice(0,20).map(r => `<div class="rule-row">
+            <span class="rule-ant">${r.antecedents}</span><span class="rule-arr">→</span>
+            <span class="rule-con">${r.consequents}</span>
+            <span>${typeof r.support==='number'?r.support.toFixed(4):r.support}</span>
+            <span>${typeof r.confidence==='number'?r.confidence.toFixed(4):r.confidence}</span>
+            <span style="color:var(--c-green)">${typeof r.lift==='number'?r.lift.toFixed(4):r.lift}</span>
+          </div>`).join('')}`;
+      } else {
+        rulesEl.innerHTML = '<div class="ml-empty">No rules found. Try lowering min_support or min_confidence.</div>';
+      }
+    }
+  } catch(e) {
+    const rulesEl = document.getElementById('ml-rules');
+    if (rulesEl) rulesEl.innerHTML = `<div class="err-msg">Error: ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    if (running) running.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  ML: RUN ANOMALY DETECTION (live API call)
+// ════════════════════════════════════════════════════════
+async function runAnomaly() {
+  const btn = document.getElementById('btn-anom-run');
+  const running = document.getElementById('anom-running');
+  btn.disabled = true;
+  if (running) running.style.display = 'flex';
+
+  const dataset       = document.getElementById('anom-dataset').value;
+  const contamination = parseFloat(document.getElementById('anom-contamination').value) || 0.05;
+  const limit         = parseInt(document.getElementById('anom-limit').value) || 20000;
+
+  try {
+    const res = await fetch('/api/anomaly_run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dataset, contamination, limit })
+    });
+    const data = await res.json();
+    const anomEl = document.getElementById('ml-anomaly');
+    if (anomEl) {
+      const key = dataset === 'ems' ? 'ems' : 'traffic';
+      const d = data[key] || data;
+      if (d.total_records) {
+        anomEl.innerHTML = `
+          <div class="wh-row"><span>Dataset</span><span>${dataset}</span></div>
+          <div class="wh-row"><span>Total Records</span><span>${fmt(d.total_records)}</span></div>
+          <div class="wh-row"><span>Anomalies Detected</span><span style="color:var(--c-red)">${fmt(d.anomalies_detected)} (${d.anomaly_pct}%)</span></div>
+          <div class="wh-row"><span>Normal Records</span><span style="color:var(--c-green)">${fmt(d.normal_count || (d.total_records - d.anomalies_detected))}</span></div>
+          <div style="font-size:0.75rem;color:var(--c-muted);margin-top:0.75rem">Algorithm: Isolation Forest (contamination=${contamination})</div>`;
+
+        // Score distribution histogram
+        if (d.score_histogram) {
+          mkChart('anom-hist-chart', 'bar',
+            d.score_histogram.bins || [],
+            [{ label: 'Count', data: d.score_histogram.counts || [],
+               backgroundColor: 'rgba(139,92,246,0.65)', borderRadius: 3 }],
+            { scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+          );
+        }
+
+        // Top anomalous segments
+        if (d.top_anomalous_segments && d.top_anomalous_segments.length) {
+          mkChart('anom-segs-chart', 'bar',
+            d.top_anomalous_segments.map(s => s.road_segment_id || s.segment_id || '?'),
+            [{ label: 'Anomaly Score', data: d.top_anomalous_segments.map(s => Math.abs(s.anomaly_score || 0)),
+               backgroundColor: 'rgba(239,68,68,0.65)', borderRadius: 4 }],
+            { indexAxis: 'y', scales: { x: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+          );
+        }
+      } else if (d.error) {
+        anomEl.innerHTML = `<div class="err-msg">Error: ${d.error}</div>`;
+      } else {
+        anomEl.innerHTML = '<div class="ml-empty">No anomaly results returned.</div>';
+      }
+    }
+  } catch(e) {
+    const anomEl = document.getElementById('ml-anomaly');
+    if (anomEl) anomEl.innerHTML = `<div class="err-msg">Error: ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    if (running) running.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE: OLAP
+// ════════════════════════════════════════════════════════
+async function loadOlap() {
+  // Pre-populate with a default roll-up
+  document.getElementById('olap-op').value = 'rollup';
+  document.getElementById('olap-fact').value = 'accidents';
+  document.getElementById('olap-level').value = 'year';
+  document.getElementById('olap-measure').value = 'acc_count';
+  await runOlap();
+}
+
+async function runOlap() {
+  const op      = document.getElementById('olap-op').value;
+  const fact    = document.getElementById('olap-fact').value;
+  const level   = document.getElementById('olap-level').value;
+  const measure = document.getElementById('olap-measure').value;
+  const year    = document.getElementById('olap-year').value;
+  const sliceDim = document.getElementById('olap-slice-dim').value;
+  const sliceVal = document.getElementById('olap-slice-val').value;
+
+  const tableEl = document.getElementById('olap-table');
+  const infoEl  = document.getElementById('olap-info');
+  const badge   = document.getElementById('olap-op-badge');
+  const countEl = document.getElementById('olap-count');
+
+  tableEl.innerHTML = '<div class="loading"><div class="spinner"></div>Executing OLAP…</div>';
+
+  let url = '';
+  const params = new URLSearchParams({ fact, level, measure });
+  if (year) params.append('year', year);
+
+  if (op === 'rollup') {
+    url = '/api/olap/rollup?' + params;
+  } else if (op === 'drilldown') {
+    params.append('from_level', level === 'year' ? 'year' : 'month');
+    params.append('to_level', level);
+    url = '/api/olap/drilldown?' + params;
+  } else if (op === 'slice') {
+    if (!sliceDim || !sliceVal) {
+      tableEl.innerHTML = '<div class="err-msg">Slice requires a Slice Dimension and Value.</div>';
+      return;
+    }
+    params.append('slice_dim', sliceDim);
+    params.append('slice_val', sliceVal);
+    url = '/api/olap/slice?' + params;
+  } else if (op === 'dice') {
+    if (sliceDim && sliceVal) params.append(sliceDim, sliceVal);
+    url = '/api/olap/dice?' + params;
+  } else if (op === 'pivot') {
+    const rowDim = sliceDim || 'weather';
+    const colDim = 'severity';
+    url = '/api/olap/pivot?' + new URLSearchParams({ fact, row_dim: rowDim, col_dim: colDim, measure });
+  }
+
+  try {
+    const data = await fetch(url).then(r => r.json());
+    if (data.error) { tableEl.innerHTML = `<div class="err-msg">Error: ${data.error}</div>`; return; }
+
+    const rows = data.rows || [];
+    const opLabel = data.operation || op.toUpperCase();
+    const measureLabel = data.measure_label || measure;
+    if (badge) badge.textContent = `${opLabel} · ${data.record_count||rows.length} rows`;
+    if (countEl) countEl.textContent = `${rows.length} results`;
+
+    // Info panel
+    if (infoEl) {
+      infoEl.innerHTML = `
+        <div class="wh-row"><span>Operation</span><span style="color:var(--c-cyan);font-weight:700">${opLabel}</span></div>
+        <div class="wh-row"><span>Fact</span><span>${fact}</span></div>
+        <div class="wh-row"><span>Level</span><span>${level}</span></div>
+        <div class="wh-row"><span>Measure</span><span>${measureLabel}</span></div>
+        <div class="wh-row"><span>Rows</span><span>${rows.length}</span></div>
+        ${data.slice_dimension ? `<div class="wh-row"><span>Slice</span><span>${data.slice_dimension} = ${data.slice_value}</span></div>` : ''}
+        ${data.active_filters && Object.keys(data.active_filters).length ? `<div class="wh-row"><span>Filters</span><span>${JSON.stringify(data.active_filters)}</span></div>` : ''}
+        <details style="margin-top:0.5rem"><summary style="cursor:pointer;color:var(--c-muted);font-size:0.78rem">Show SQL</summary>
+          <pre style="font-size:0.68rem;white-space:pre-wrap;word-break:break-all;color:var(--c-muted);margin-top:0.3rem">${data.sql||''}</pre>
+        </details>`;
+    }
+
+    // Chart
+    if (rows.length) {
+      const labels = rows.map(r => r.period_label || r.row_dim || Object.values(r)[0] || '');
+      const vals   = rows.map(r => parseFloat(r.measure_value) || 0);
+      mkChart('olap-chart', rows.length > 20 ? 'line' : 'bar', labels,
+        [{ label: measureLabel, data: vals,
+           backgroundColor: 'rgba(59,130,246,0.65)', borderColor: '#3b82f6',
+           borderRadius: 4, fill: rows.length > 20, tension: 0.4 }],
+        { scales: { y: { beginAtZero: true },
+                    x: { ticks: { maxRotation: 45, maxTicksLimit: 24 } } },
+          plugins: { legend: { display: false } } }
+      );
+    }
+
+    // Table
+    if (rows.length) {
+      const cols = Object.keys(rows[0]).filter(c => c !== 'sort_v');
+      tableEl.innerHTML = `
+        <table class="data-table">
+          <thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+          <tbody>${rows.map(r =>
+            `<tr>${cols.map(c => `<td>${r[c] !== null && r[c] !== undefined ? r[c] : '—'}</td>`).join('')}</tr>`
+          ).join('')}</tbody>
+        </table>`;
+    } else {
+      tableEl.innerHTML = '<div class="ml-empty">No results. Try different parameters.</div>';
+    }
+  } catch(e) {
+    tableEl.innerHTML = `<div class="err-msg">Request failed: ${e.message}</div>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  PAGE ROUTER
+// ════════════════════════════════════════════════════════
+function loadPage(id) {
+  const loaders = {
+    overview:      loadOverview,
+    traffic:       loadTraffic,
+    accidents:     loadAccidents,
+    weather:       loadWeather,
+    emergencies:   loadEmergencies,
+    routes:        loadRoutes,
+    hospitals:     loadHospitals,
+    warehouse:     loadWarehouse,
+    olap:          loadOlap,
+    ml:            loadML,
+    random_forest: loadRandomForest,
+    simulator:     () => { if (!allRSimHospitals.length) initRSimHospitals(); },
+  };
+  if (loaders[id]) loaders[id]();
+}
+
+// ════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  checkHealth();
+  loadOverview();
+  initRSimHospitals();
+  pageLoaded['overview'] = true;
+});
+</script>
+</body>
+</html>

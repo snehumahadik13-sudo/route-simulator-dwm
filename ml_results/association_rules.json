@@ -1,0 +1,352 @@
+[
+  {
+    "antecedents": "outcome=fatal, visibility=low",
+    "consequents": "severity=fatal",
+    "support": 0.0743,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal, visibility=low",
+    "consequents": "outcome=fatal",
+    "support": 0.0743,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal",
+    "consequents": "outcome=fatal, visibility=low",
+    "support": 0.0743,
+    "confidence": 0.4975,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal",
+    "consequents": "severity=fatal, visibility=low",
+    "support": 0.0743,
+    "confidence": 0.4975,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal, road=urban",
+    "consequents": "severity=fatal",
+    "support": 0.052,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "road=urban, severity=fatal",
+    "consequents": "outcome=fatal",
+    "support": 0.052,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal",
+    "consequents": "density=high, outcome=fatal",
+    "support": 0.0522,
+    "confidence": 0.3498,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal",
+    "consequents": "density=high, severity=fatal",
+    "support": 0.0522,
+    "confidence": 0.3498,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "casualties=high, severity=fatal",
+    "consequents": "outcome=fatal",
+    "support": 0.0893,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "casualties=high, outcome=fatal",
+    "consequents": "severity=fatal",
+    "support": 0.0893,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "density=high, outcome=fatal",
+    "consequents": "severity=fatal",
+    "support": 0.0522,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "density=high, severity=fatal",
+    "consequents": "outcome=fatal",
+    "support": 0.0522,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "density=low, outcome=fatal",
+    "consequents": "severity=fatal",
+    "support": 0.053,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "density=low, severity=fatal",
+    "consequents": "outcome=fatal",
+    "support": 0.053,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal",
+    "consequents": "severity=fatal",
+    "support": 0.1494,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal",
+    "consequents": "severity=fatal, weather=rain",
+    "support": 0.05,
+    "confidence": 0.3348,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal",
+    "consequents": "outcome=fatal, weather=rain",
+    "support": 0.05,
+    "confidence": 0.3348,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal, weather=rain",
+    "consequents": "severity=fatal",
+    "support": 0.05,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal",
+    "consequents": "density=low, severity=fatal",
+    "support": 0.053,
+    "confidence": 0.3552,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal",
+    "consequents": "density=low, outcome=fatal",
+    "support": 0.053,
+    "confidence": 0.3552,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal, weather=rain",
+    "consequents": "outcome=fatal",
+    "support": 0.05,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal",
+    "consequents": "outcome=fatal",
+    "support": 0.1494,
+    "confidence": 1.0,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal",
+    "consequents": "casualties=high, outcome=fatal",
+    "support": 0.0893,
+    "confidence": 0.5979,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal",
+    "consequents": "casualties=high, severity=fatal",
+    "support": 0.0893,
+    "confidence": 0.5979,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "severity=fatal",
+    "consequents": "outcome=fatal, road=urban",
+    "support": 0.052,
+    "confidence": 0.3478,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "outcome=fatal",
+    "consequents": "road=urban, severity=fatal",
+    "support": 0.052,
+    "confidence": 0.3478,
+    "lift": 6.6957
+  },
+  {
+    "antecedents": "density=low, weather=clear",
+    "consequents": "time=night, visibility=high",
+    "support": 0.055,
+    "confidence": 0.4603,
+    "lift": 5.4923
+  },
+  {
+    "antecedents": "density=low, visibility=high",
+    "consequents": "time=night, weather=clear",
+    "support": 0.055,
+    "confidence": 0.4603,
+    "lift": 5.4923
+  },
+  {
+    "antecedents": "time=night, visibility=high",
+    "consequents": "density=low, weather=clear",
+    "support": 0.055,
+    "confidence": 0.6563,
+    "lift": 5.4923
+  },
+  {
+    "antecedents": "time=night, weather=clear",
+    "consequents": "density=low, visibility=high",
+    "support": 0.055,
+    "confidence": 0.6563,
+    "lift": 5.4923
+  },
+  {
+    "antecedents": "time=peak, visibility=high",
+    "consequents": "density=high, weather=clear",
+    "support": 0.0583,
+    "confidence": 0.5324,
+    "lift": 4.5484
+  },
+  {
+    "antecedents": "density=high, visibility=high",
+    "consequents": "time=peak, weather=clear",
+    "support": 0.0583,
+    "confidence": 0.4985,
+    "lift": 4.5484
+  },
+  {
+    "antecedents": "time=peak, weather=clear",
+    "consequents": "density=high, visibility=high",
+    "support": 0.0583,
+    "confidence": 0.5324,
+    "lift": 4.5484
+  },
+  {
+    "antecedents": "density=high, weather=clear",
+    "consequents": "time=peak, visibility=high",
+    "support": 0.0583,
+    "confidence": 0.4985,
+    "lift": 4.5484
+  },
+  {
+    "antecedents": "density=low, visibility=low",
+    "consequents": "time=night, weather=fog",
+    "support": 0.0541,
+    "confidence": 0.3069,
+    "lift": 3.6714
+  },
+  {
+    "antecedents": "time=night, weather=fog",
+    "consequents": "density=low, visibility=low",
+    "support": 0.0541,
+    "confidence": 0.6465,
+    "lift": 3.6714
+  },
+  {
+    "antecedents": "density=low, weather=fog",
+    "consequents": "time=night, visibility=low",
+    "support": 0.0541,
+    "confidence": 0.462,
+    "lift": 3.6635
+  },
+  {
+    "antecedents": "time=night, visibility=low",
+    "consequents": "density=low, weather=fog",
+    "support": 0.0541,
+    "confidence": 0.4286,
+    "lift": 3.6635
+  },
+  {
+    "antecedents": "density=medium, weather=rain",
+    "consequents": "visibility=medium",
+    "support": 0.0506,
+    "confidence": 0.5124,
+    "lift": 3.084
+  },
+  {
+    "antecedents": "visibility=medium",
+    "consequents": "density=medium, weather=rain",
+    "support": 0.0506,
+    "confidence": 0.3045,
+    "lift": 3.084
+  },
+  {
+    "antecedents": "road=highway, visibility=high",
+    "consequents": "severity=minor, weather=clear",
+    "support": 0.0611,
+    "confidence": 0.5647,
+    "lift": 3.0682
+  },
+  {
+    "antecedents": "road=highway, weather=clear",
+    "consequents": "severity=minor, visibility=high",
+    "support": 0.0611,
+    "confidence": 0.5647,
+    "lift": 3.0682
+  },
+  {
+    "antecedents": "severity=minor, weather=clear",
+    "consequents": "road=highway, visibility=high",
+    "support": 0.0611,
+    "confidence": 0.332,
+    "lift": 3.0682
+  },
+  {
+    "antecedents": "severity=minor, visibility=high",
+    "consequents": "road=highway, weather=clear",
+    "support": 0.0611,
+    "confidence": 0.332,
+    "lift": 3.0682
+  },
+  {
+    "antecedents": "time=peak, visibility=low",
+    "consequents": "density=high, weather=fog",
+    "support": 0.0602,
+    "confidence": 0.3562,
+    "lift": 3.0602
+  },
+  {
+    "antecedents": "density=high, weather=fog",
+    "consequents": "time=peak, visibility=low",
+    "support": 0.0602,
+    "confidence": 0.5172,
+    "lift": 3.0602
+  },
+  {
+    "antecedents": "visibility=medium",
+    "consequents": "road=rural, weather=rain",
+    "support": 0.0549,
+    "confidence": 0.3301,
+    "lift": 3.0595
+  },
+  {
+    "antecedents": "road=rural, weather=rain",
+    "consequents": "visibility=medium",
+    "support": 0.0549,
+    "confidence": 0.5083,
+    "lift": 3.0595
+  },
+  {
+    "antecedents": "density=high, visibility=low",
+    "consequents": "time=peak, weather=fog",
+    "support": 0.0602,
+    "confidence": 0.3404,
+    "lift": 3.0379
+  },
+  {
+    "antecedents": "time=peak, weather=fog",
+    "consequents": "density=high, visibility=low",
+    "support": 0.0602,
+    "confidence": 0.5373,
+    "lift": 3.0379
+  }
+]

@@ -1,0 +1,50 @@
+{
+  "model": "RandomForestClassifier",
+  "target": "accident_severity",
+  "features": [
+    "temperature_c",
+    "risk_score",
+    "vehicles_involved",
+    "casualties",
+    "lanes",
+    "hour_24",
+    "weather",
+    "visibility",
+    "road_type",
+    "traffic_density",
+    "cause",
+    "traffic_signal",
+    "is_peak_hour"
+  ],
+  "classes": [
+    "fatal",
+    "major",
+    "minor"
+  ],
+  "train_size": 16000,
+  "test_size": 4000,
+  "accuracy": 0.596,
+  "f1_weighted": 0.5985,
+  "cv_accuracy_mean": 0.5978,
+  "cv_accuracy_std": 0.007,
+  "feature_importances": {
+    "risk_score": 0.3536,
+    "casualties": 0.1735,
+    "traffic_density": 0.1177,
+    "visibility": 0.07,
+    "vehicles_involved": 0.0616,
+    "temperature_c": 0.0481,
+    "hour_24": 0.0465,
+    "weather": 0.041,
+    "lanes": 0.027,
+    "cause": 0.0239,
+    "road_type": 0.0158,
+    "is_peak_hour": 0.0113,
+    "traffic_signal": 0.0099
+  },
+  "comparison_gb": {
+    "accuracy": 0.69,
+    "f1": 0.5919
+  },
+  "classification_report": "              precision    recall  f1-score   support\n\n       fatal       0.94      1.00      0.97       597\n       major       0.35      0.39      0.37      1198\n       minor       0.65      0.60      0.62      2205\n\n    accuracy                           0.60      4000\n   macro avg       0.65      0.66      0.65      4000\nweighted avg       0.60      0.60      0.60      4000\n"
+}

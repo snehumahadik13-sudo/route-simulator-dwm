@@ -1,0 +1,102 @@
+{
+  "model": "RandomForestClassifier",
+  "target": "delay_risk",
+  "target_type": "DERIVED",
+  "target_derivation": "Derived from congestion_label (Gridlock/Heavy->High, Moderate->Medium, Free-Flow/Light->Low) with avg_wait_time_s fallback (>=90s=High, >=40s=Medium). Not ground-truth.",
+  "distinction": "This model targets delay_risk from traffic telemetry. ml/classification.py targets accident_severity from accident records.",
+  "hyperparameters": {
+    "n_estimators": 200,
+    "max_depth": 15,
+    "min_samples_leaf": 5,
+    "class_weight": "balanced"
+  },
+  "features": [
+    "avg_speed_kmph",
+    "density_veh_per_km",
+    "avg_wait_time_s",
+    "occupancy_pct",
+    "flow_veh_per_hr",
+    "queue_length_veh",
+    "congestion_pressure",
+    "incident_num",
+    "temp_c",
+    "visibility_km",
+    "rain_intensity_mmph",
+    "hour_24",
+    "is_weekend"
+  ],
+  "classes": [
+    "High",
+    "Low",
+    "Medium"
+  ],
+  "train_size": 48000,
+  "test_size": 12000,
+  "accuracy": 0.9928,
+  "precision_weighted": 0.9928,
+  "recall_weighted": 0.9928,
+  "f1_weighted": 0.9928,
+  "cv_accuracy_mean": 0.9928,
+  "cv_accuracy_std": 0.0005,
+  "feature_importances": {
+    "congestion_pressure": 0.14742,
+    "flow_veh_per_hr": 0.13629,
+    "avg_speed_kmph": 0.13284,
+    "incident_num": 0.11951,
+    "visibility_km": 0.11934,
+    "occupancy_pct": 0.09995,
+    "avg_wait_time_s": 0.06826,
+    "density_veh_per_km": 0.06553,
+    "rain_intensity_mmph": 0.057,
+    "queue_length_veh": 0.05049,
+    "is_weekend": 0.00262,
+    "temp_c": 0.00049,
+    "hour_24": 0.00025
+  },
+  "confusion_matrix": {
+    "labels": [
+      "High",
+      "Low",
+      "Medium"
+    ],
+    "matrix": [
+      [
+        5121,
+        0,
+        19
+      ],
+      [
+        0,
+        3547,
+        12
+      ],
+      [
+        18,
+        37,
+        3246
+      ]
+    ]
+  },
+  "per_class_metrics": {
+    "High": {
+      "precision": 0.9965,
+      "recall": 0.9963,
+      "f1": 0.9964,
+      "support": 5140
+    },
+    "Low": {
+      "precision": 0.9897,
+      "recall": 0.9966,
+      "f1": 0.9931,
+      "support": 3559
+    },
+    "Medium": {
+      "precision": 0.9905,
+      "recall": 0.9833,
+      "f1": 0.9869,
+      "support": 3301
+    }
+  },
+  "classification_report": "              precision    recall  f1-score   support\n\n        High       1.00      1.00      1.00      5140\n         Low       0.99      1.00      0.99      3559\n      Medium       0.99      0.98      0.99      3301\n\n    accuracy                           0.99     12000\n   macro avg       0.99      0.99      0.99     12000\nweighted avg       0.99      0.99      0.99     12000\n",
+  "note": "Academic historical model. All metrics from real warehouse data. Do not use for real-time emergency dispatching."
+}

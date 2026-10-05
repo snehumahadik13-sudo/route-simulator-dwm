@@ -1,0 +1,59 @@
+{
+  "traffic": {
+    "total_records": 50000,
+    "anomalies_detected": 2500,
+    "anomaly_pct": 5.0,
+    "feature_comparison": {
+      "avg_speed_kmph": {
+        "anomaly_mean": 6.552,
+        "normal_mean": 41.896,
+        "ratio": 0.156
+      },
+      "density_veh_per_km": {
+        "anomaly_mean": 87.869,
+        "normal_mean": 40.13,
+        "ratio": 2.19
+      },
+      "avg_wait_time_s": {
+        "anomaly_mean": 115.01,
+        "normal_mean": 37.597,
+        "ratio": 3.059
+      },
+      "occupancy_pct": {
+        "anomaly_mean": 93.061,
+        "normal_mean": 46.276,
+        "ratio": 2.011
+      },
+      "flow_veh_per_hr": {
+        "anomaly_mean": 154.368,
+        "normal_mean": 1273.531,
+        "ratio": 0.121
+      },
+      "congestion_pressure": {
+        "anomaly_mean": 103.088,
+        "normal_mean": 25.315,
+        "ratio": 4.072
+      },
+      "incident_num": {
+        "anomaly_mean": 1.925,
+        "normal_mean": 0.697,
+        "ratio": 2.763
+      },
+      "visibility_km": {
+        "anomaly_mean": 1.213,
+        "normal_mean": 5.758,
+        "ratio": 0.211
+      },
+      "rain_intensity_mmph": {
+        "anomaly_mean": 9.681,
+        "normal_mean": 3.314,
+        "ratio": 2.922
+      }
+    }
+  },
+  "ems": {
+    "total_records": 20000,
+    "anomalies_detected": 1000,
+    "anomaly_pct": 5.0
+  }
+}

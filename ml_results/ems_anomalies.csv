@@ -1,0 +1,201 @@
+event_id,date_key,hospital_code,facility_type,condition,chief_complaint,patient_age,patient_gender,sbp,heart_rate,spo2,gcs,triage_priority,clinical_urgency_score,hour_24,time_of_day_bucket,is_peak_hour,anomaly,anomaly_score
+EMS-118552,20260306,H003,level1_trauma_center,trauma,motorcycle crash injury,1,male,177,40,100,6,red,8.75,19,Evening Peak,True,1,-0.6612335787430403
+EMS-112439,20260420,H002,stroke_center,stroke,arm weakness,89,male,76,40,100,7,red,10.00,23,Late Evening,False,1,-0.6308103684357789
+EMS-104473,20260228,H001,cardiac_center,stroke,sudden confusion,5,male,83,42,99,6,red,10.00,9,Morning Peak,True,1,-0.6304026775343049
+EMS-118428,20260422,H002,stroke_center,trauma,fall from height,2,female,179,53,100,6,red,6.88,1,Night,False,1,-0.6284045094509113
+EMS-117629,20260124,H003,level1_trauma_center,trauma,motorcycle crash injury,1,female,77,45,82,15,red,9.38,13,Midday,False,1,-0.626959839983094
+EMS-119824,20260401,H003,level1_trauma_center,cardiac,sweating with chest pressure,1,male,82,43,100,8,red,10.00,13,Midday,False,1,-0.6233183105242596
+EMS-110878,20260425,H003,level1_trauma_center,stroke,slurred speech,2,female,83,46,96,6,red,10.00,14,Midday,False,1,-0.6228923147097759
+EMS-119109,20260505,H004,general_emergency,cardiac,crushing chest pain,89,male,170,158,100,6,red,8.75,0,Night,False,1,-0.6216560772125581
+EMS-113356,20260328,H001,cardiac_center,stroke,sudden confusion,8,female,177,50,100,6,red,6.88,23,Late Evening,False,1,-0.6194574315067257
+EMS-109906,20260418,H002,stroke_center,stroke,arm weakness,86,female,80,46,100,6,red,10.00,6,Early Morning,False,1,-0.6192714408547574
+EMS-110728,20260424,H003,level1_trauma_center,stroke,vision disturbance,3,female,132,40,84,6,red,10.00,13,Midday,False,1,-0.6190867386319122
+EMS-115566,20260107,H004,general_emergency,trauma,severe bleeding,1,male,172,159,83,7,red,10.00,1,Night,False,1,-0.6180964510908604
+EMS-108105,20260427,H004,general_emergency,cardiac,crushing chest pain,17,male,169,41,82,6,red,10.00,6,Early Morning,False,1,-0.617575730111352
+EMS-117972,20260405,H001,cardiac_center,cardiac,palpitations,6,female,71,40,100,14,red,5.63,2,Night,False,1,-0.6174835622035592
+EMS-100009,20260215,H003,level1_trauma_center,trauma,multiple fractures,83,female,180,160,82,7,red,10.00,18,Evening Peak,True,1,-0.617480458882891
+EMS-101859,20260323,H002,stroke_center,cardiac,shortness of breath,85,female,73,40,100,15,red,5.63,15,Midday,False,1,-0.6166816880091761
+EMS-104935,20260425,H003,level1_trauma_center,trauma,severe bleeding,2,male,162,156,83,6,red,10.00,1,Night,False,1,-0.6147214914295354
+EMS-101242,20260319,H001,cardiac_center,trauma,severe bleeding,15,female,75,154,100,6,red,10.00,1,Night,False,1,-0.6145425497907668
+EMS-110619,20260503,H003,level1_trauma_center,cardiac,sweating with chest pressure,67,male,70,159,100,6,red,10.00,0,Night,False,1,-0.6141276708050285
+EMS-117743,20260113,H001,cardiac_center,cardiac,shortness of breath,1,male,80,131,100,6,red,10.00,7,Early Morning,False,1,-0.6140678952680197
+EMS-111653,20260428,H002,stroke_center,trauma,vehicle collision trauma,78,female,70,149,100,6,red,10.00,3,Night,False,1,-0.6137099497526011
+EMS-117183,20260314,H001,cardiac_center,stroke,facial droop,90,male,85,159,93,6,red,10.00,4,Night,False,1,-0.6114167043577933
+EMS-100459,20260310,H004,general_emergency,stroke,vision disturbance,24,male,177,61,100,15,yellow,2.00,7,Early Morning,False,1,-0.6113304764332351
+EMS-101441,20260427,H002,stroke_center,cardiac,sweating with chest pressure,3,female,120,158,83,6,red,10.00,0,Night,False,1,-0.6109029039061538
+EMS-114851,20260427,H004,general_emergency,cardiac,crushing chest pain,47,female,80,43,100,6,red,10.00,22,Late Evening,False,1,-0.6104966516555423
+EMS-109421,20260504,H001,cardiac_center,cardiac,crushing chest pain,54,female,78,157,100,6,red,10.00,22,Late Evening,False,1,-0.61049032906179
+EMS-113990,20260421,H002,stroke_center,cardiac,crushing chest pain,9,female,164,49,82,6,red,10.00,13,Midday,False,1,-0.610457149881652
+EMS-115340,20260103,H003,level1_trauma_center,trauma,multiple fractures,1,female,166,64,100,6,red,6.88,9,Morning Peak,True,1,-0.6101610579601382
+EMS-100939,20260109,H001,cardiac_center,stroke,arm weakness,78,male,89,156,100,6,red,10.00,2,Night,False,1,-0.6099961624501483
+EMS-104290,20260324,H001,cardiac_center,cardiac,crushing chest pain,1,male,70,103,83,6,red,10.00,14,Midday,False,1,-0.6097986141397397
+EMS-115502,20260213,H004,general_emergency,cardiac,palpitations,90,male,168,154,100,15,yellow,3.50,11,Morning Peak,True,1,-0.6096207541976411
+EMS-110137,20260314,H002,stroke_center,trauma,motorcycle crash injury,90,female,71,82,83,6,red,10.00,13,Midday,False,1,-0.6094414929011225
+EMS-117512,20260309,H004,general_emergency,trauma,motorcycle crash injury,88,male,146,157,82,6,red,10.00,18,Evening Peak,True,1,-0.6091940032751813
+EMS-104911,20260224,H003,level1_trauma_center,stroke,sudden confusion,87,female,179,156,100,7,red,8.75,14,Midday,False,1,-0.6090551220303096
+EMS-119623,20260428,H002,stroke_center,cardiac,shortness of breath,87,male,178,68,100,6,red,6.88,3,Night,False,1,-0.6085876827595277
+EMS-101342,20260303,H001,cardiac_center,stroke,slurred speech,4,male,74,137,82,6,red,10.00,11,Morning Peak,True,1,-0.6083887047684408
+EMS-119194,20260130,H003,level1_trauma_center,cardiac,radiating arm pain,81,male,176,41,100,7,red,8.75,6,Early Morning,False,1,-0.608054365900385
+EMS-104617,20260310,H001,cardiac_center,cardiac,sweating with chest pressure,88,male,175,80,100,15,yellow,2.00,22,Late Evening,False,1,-0.6079487066718743
+EMS-106013,20260310,H001,cardiac_center,trauma,fall from height,7,female,180,157,98,6,red,8.75,22,Late Evening,False,1,-0.6076612730033432
+EMS-105597,20260406,H001,cardiac_center,cardiac,sweating with chest pressure,81,male,175,159,99,6,red,8.75,13,Midday,False,1,-0.6067893988524767
+EMS-110620,20260314,H003,level1_trauma_center,cardiac,radiating arm pain,2,female,165,159,83,9,red,10.00,23,Late Evening,False,1,-0.60671496217904
+EMS-118324,20260318,H002,stroke_center,trauma,motorcycle crash injury,7,male,178,156,99,6,red,8.75,12,Midday,False,1,-0.6065413424435772
+EMS-103520,20260416,H003,level1_trauma_center,stroke,sudden confusion,54,female,178,158,82,14,red,8.13,11,Morning Peak,True,1,-0.6065010796739476
+EMS-101936,20260428,H003,level1_trauma_center,cardiac,palpitations,2,male,175,100,82,6,red,10.00,17,Evening Peak,True,1,-0.6064905199068736
+EMS-114698,20260507,H004,general_emergency,trauma,fall from height,54,male,176,151,82,15,red,8.13,0,Night,False,1,-0.6064331586688148
+EMS-103206,20260326,H001,cardiac_center,trauma,motorcycle crash injury,5,female,75,43,84,15,red,9.38,23,Late Evening,False,1,-0.6062043704517781
+EMS-107289,20260507,H001,cardiac_center,stroke,vision disturbance,3,male,77,49,99,7,red,10.00,10,Morning Peak,True,1,-0.6057206647736817
+EMS-111446,20260429,H002,stroke_center,cardiac,shortness of breath,82,female,179,123,100,15,yellow,2.00,22,Late Evening,False,1,-0.6054315773763643
+EMS-101532,20260308,H004,general_emergency,cardiac,palpitations,3,male,178,49,100,13,yellow,3.50,2,Night,False,1,-0.6053752211463459
+EMS-106820,20260220,H003,level1_trauma_center,stroke,vision disturbance,65,female,166,160,82,6,red,10.00,17,Evening Peak,True,1,-0.6053092703283086
+EMS-113350,20260320,H003,level1_trauma_center,stroke,facial droop,89,female,83,47,82,14,red,9.38,6,Early Morning,False,1,-0.6050608763168687
+EMS-106231,20260129,H004,general_emergency,trauma,severe bleeding,2,male,174,50,98,15,yellow,2.00,21,Late Evening,False,1,-0.6046237459940432
+EMS-106748,20260126,H004,general_emergency,stroke,slurred speech,2,male,161,49,82,12,red,10.00,1,Night,False,1,-0.6040483466355097
+EMS-105006,20260323,H001,cardiac_center,cardiac,palpitations,4,male,170,49,95,6,red,8.75,20,Evening Peak,True,1,-0.6039154071259715
+EMS-103988,20260303,H003,level1_trauma_center,trauma,fall from height,7,male,72,107,82,6,red,10.00,23,Late Evening,False,1,-0.603866834661313
+EMS-108067,20260408,H004,general_emergency,cardiac,crushing chest pain,83,male,179,158,90,6,red,10.00,0,Night,False,1,-0.603568328938598
+EMS-111087,20260414,H001,cardiac_center,stroke,facial droop,5,female,178,41,100,13,yellow,3.50,3,Night,False,1,-0.6034311497727161
+EMS-108117,20260120,H004,general_emergency,trauma,severe bleeding,15,male,98,42,100,6,red,8.75,17,Evening Peak,True,1,-0.6033384285985923
+EMS-107139,20260518,H002,stroke_center,stroke,vision disturbance,4,male,125,155,100,6,red,8.75,13,Midday,False,1,-0.6028897860047754
+EMS-116685,20260503,H004,general_emergency,cardiac,shortness of breath,85,female,179,160,89,15,red,6.25,1,Night,False,1,-0.6027343612633772
+EMS-118577,20260204,H003,level1_trauma_center,stroke,facial droop,8,male,171,152,82,15,red,8.13,13,Midday,False,1,-0.6026501521401917
+EMS-106850,20260331,H001,cardiac_center,stroke,vision disturbance,8,female,177,42,82,8,red,10.00,5,Night,False,1,-0.6025277444688322
+EMS-100659,20260325,H004,general_emergency,cardiac,sweating with chest pressure,1,male,112,42,86,6,red,10.00,16,Midday,False,1,-0.602347750979808
+EMS-118433,20260511,H001,cardiac_center,cardiac,shortness of breath,4,male,158,154,82,7,red,10.00,18,Evening Peak,True,1,-0.6023441877653863
+EMS-102354,20260218,H004,general_emergency,trauma,multiple fractures,89,male,179,154,83,13,red,8.13,8,Morning Peak,True,1,-0.6021983202966071
+EMS-117106,20260308,H004,general_emergency,stroke,slurred speech,8,male,177,156,83,14,red,8.13,20,Evening Peak,True,1,-0.6021953899671226
+EMS-115733,20260304,H002,stroke_center,cardiac,crushing chest pain,21,female,83,41,97,6,red,10.00,10,Morning Peak,True,1,-0.6021930511074093
+EMS-106340,20260503,H004,general_emergency,stroke,sudden confusion,90,male,179,135,88,6,red,10.00,16,Midday,False,1,-0.6019710585791725
+EMS-107943,20260126,H003,level1_trauma_center,stroke,sudden confusion,2,female,87,49,87,6,red,10.00,22,Late Evening,False,1,-0.6017734445046427
+EMS-118845,20260212,H004,general_emergency,trauma,multiple fractures,28,male,83,155,100,6,red,10.00,16,Midday,False,1,-0.6017647855857683
+EMS-119049,20260506,H004,general_emergency,cardiac,shortness of breath,3,female,71,47,82,8,red,10.00,20,Evening Peak,True,1,-0.6017144480459893
+EMS-105373,20260504,H004,general_emergency,cardiac,crushing chest pain,83,female,178,40,82,14,red,8.13,20,Evening Peak,True,1,-0.6014669423813498
+EMS-104878,20260128,H002,stroke_center,cardiac,sweating with chest pressure,22,female,80,40,83,6,red,10.00,14,Midday,False,1,-0.6013962964909483
+EMS-110855,20260309,H003,level1_trauma_center,stroke,sudden confusion,90,male,75,160,83,7,red,10.00,7,Early Morning,False,1,-0.6012247796475126
+EMS-112552,20260513,H001,cardiac_center,cardiac,palpitations,7,female,175,102,100,15,yellow,2.00,15,Midday,False,1,-0.6011259286195011
+EMS-101504,20260427,H001,cardiac_center,trauma,vehicle collision trauma,61,female,77,40,99,6,red,10.00,9,Morning Peak,True,1,-0.6007622388122219
+EMS-102588,20260117,H004,general_emergency,cardiac,crushing chest pain,7,male,176,113,82,6,red,10.00,16,Midday,False,1,-0.6007455021747709
+EMS-106504,20260426,H002,stroke_center,stroke,slurred speech,2,female,71,134,95,6,red,10.00,2,Night,False,1,-0.6004594249552184
+EMS-102246,20260208,H001,cardiac_center,trauma,multiple fractures,51,male,179,128,100,15,yellow,2.00,11,Morning Peak,True,1,-0.600322559348624
+EMS-111544,20260415,H001,cardiac_center,stroke,sudden confusion,88,female,180,49,98,6,red,8.75,16,Midday,False,1,-0.6002794048896043
+EMS-104492,20260224,H003,level1_trauma_center,cardiac,crushing chest pain,2,male,107,40,93,6,red,8.75,23,Late Evening,False,1,-0.6002617332837551
+EMS-115218,20260122,H001,cardiac_center,trauma,vehicle collision trauma,6,male,177,113,100,14,yellow,2.00,18,Evening Peak,True,1,-0.6000767104956007
+EMS-116725,20260208,H001,cardiac_center,trauma,severe bleeding,90,male,123,160,85,6,red,10.00,15,Midday,False,1,-0.6000292919541113
+EMS-113618,20260430,H003,level1_trauma_center,cardiac,palpitations,82,female,74,155,100,7,red,10.00,21,Late Evening,False,1,-0.5998900128682174
+EMS-116256,20260517,H003,level1_trauma_center,trauma,vehicle collision trauma,15,female,180,44,85,6,red,10.00,13,Midday,False,1,-0.5996617439702666
+EMS-111365,20260314,H003,level1_trauma_center,cardiac,palpitations,28,female,75,159,99,6,red,10.00,6,Early Morning,False,1,-0.5996581529219174
+EMS-106932,20260326,H002,stroke_center,cardiac,crushing chest pain,19,male,180,55,99,14,yellow,2.00,16,Midday,False,1,-0.5996514625898363
+EMS-107992,20260214,H004,general_emergency,cardiac,crushing chest pain,89,male,177,77,98,15,yellow,2.00,14,Midday,False,1,-0.5996450076219372
+EMS-111319,20260506,H002,stroke_center,stroke,sudden confusion,88,female,75,156,92,6,red,10.00,9,Morning Peak,True,1,-0.5995942175596477
+EMS-113135,20260405,H001,cardiac_center,stroke,slurred speech,13,female,176,63,100,13,yellow,2.00,6,Early Morning,False,1,-0.5995607150397863
+EMS-118083,20260105,H004,general_emergency,stroke,sudden confusion,2,female,103,158,82,14,red,8.13,8,Morning Peak,True,1,-0.5994390307489218
+EMS-110478,20260420,H002,stroke_center,cardiac,palpitations,90,male,178,102,92,15,yellow,2.00,14,Midday,False,1,-0.5993712229060216
+EMS-115308,20260517,H001,cardiac_center,cardiac,palpitations,68,male,88,158,100,6,red,10.00,1,Night,False,1,-0.5993566354855158
+EMS-119911,20260508,H003,level1_trauma_center,cardiac,palpitations,47,male,83,42,99,6,red,10.00,19,Evening Peak,True,1,-0.5993462385862831
+EMS-102567,20260501,H002,stroke_center,trauma,severe bleeding,88,male,124,153,100,6,red,8.75,6,Early Morning,False,1,-0.5992907970890761
+EMS-112340,20260114,H002,stroke_center,trauma,fall from height,90,female,136,143,82,15,red,8.13,15,Midday,False,1,-0.5992598914886457
+EMS-102690,20260315,H002,stroke_center,stroke,vision disturbance,88,female,87,53,82,6,red,10.00,6,Early Morning,False,1,-0.5991167632634697
+EMS-109827,20260212,H001,cardiac_center,trauma,fall from height,23,male,178,160,88,7,red,10.00,23,Late Evening,False,1,-0.5988794067081522
+EMS-113265,20260122,H001,cardiac_center,trauma,motorcycle crash injury,1,female,96,159,98,15,yellow,3.50,19,Evening Peak,True,1,-0.5988669422034083
+EMS-107265,20260417,H004,general_emergency,cardiac,palpitations,90,male,78,108,100,6,red,8.13,16,Midday,False,1,-0.5984593699892108
+EMS-119206,20260511,H001,cardiac_center,stroke,vision disturbance,87,male,164,104,82,6,red,10.00,6,Early Morning,False,1,-0.5984257269875004
+EMS-101423,20260105,H002,stroke_center,stroke,facial droop,40,female,178,40,83,6,red,10.00,14,Midday,False,1,-0.5983456535054013
+EMS-113739,20260225,H003,level1_trauma_center,stroke,arm weakness,19,female,180,144,82,15,red,8.13,5,Night,False,1,-0.5980636346610573
+EMS-117796,20260425,H003,level1_trauma_center,trauma,fall from height,2,male,169,49,100,9,yellow,5.50,0,Night,False,1,-0.5978833935391845
+EMS-111277,20260512,H002,stroke_center,stroke,vision disturbance,3,female,168,147,83,6,red,10.00,14,Midday,False,1,-0.5977447407182227
+EMS-119199,20260514,H002,stroke_center,trauma,multiple fractures,2,male,177,75,84,6,red,10.00,17,Evening Peak,True,1,-0.5977112109410636
+EMS-113762,20260223,H004,general_emergency,trauma,multiple fractures,89,male,113,160,99,6,red,8.75,11,Morning Peak,True,1,-0.5977025233145465
+EMS-119301,20260508,H002,stroke_center,cardiac,palpitations,51,male,87,41,100,7,red,10.00,9,Morning Peak,True,1,-0.5976172988901864
+EMS-110930,20260105,H003,level1_trauma_center,stroke,arm weakness,14,female,99,45,82,6,red,10.00,9,Morning Peak,True,1,-0.5975491453432795
+EMS-106625,20260417,H001,cardiac_center,cardiac,crushing chest pain,7,male,177,51,85,6,red,8.75,23,Late Evening,False,1,-0.5974555835611314
+EMS-117611,20260117,H004,general_emergency,cardiac,radiating arm pain,1,male,75,157,83,11,red,10.00,23,Late Evening,False,1,-0.597428488095703
+EMS-100179,20260124,H004,general_emergency,trauma,severe bleeding,87,female,176,40,82,10,red,10.00,4,Night,False,1,-0.5972902767388182
+EMS-100027,20260330,H003,level1_trauma_center,trauma,fall from height,6,male,178,46,84,12,red,10.00,22,Late Evening,False,1,-0.5972878132472403
+EMS-105749,20260107,H002,stroke_center,stroke,slurred speech,8,female,81,146,82,15,red,9.38,14,Midday,False,1,-0.5972206686019732
+EMS-117834,20260116,H001,cardiac_center,cardiac,palpitations,5,male,168,160,82,10,red,10.00,6,Early Morning,False,1,-0.5972185722493717
+EMS-104647,20260118,H002,stroke_center,trauma,motorcycle crash injury,7,female,70,68,91,6,red,10.00,1,Night,False,1,-0.5968544320218437
+EMS-100564,20260401,H001,cardiac_center,stroke,facial droop,7,male,150,160,86,6,red,10.00,12,Midday,False,1,-0.596854412939995
+EMS-118890,20260327,H003,level1_trauma_center,stroke,facial droop,88,male,180,145,89,6,red,10.00,14,Midday,False,1,-0.5967474598308297
+EMS-100420,20260201,H003,level1_trauma_center,stroke,sudden confusion,5,female,175,155,100,7,red,8.75,11,Morning Peak,True,1,-0.596663348504528
+EMS-101522,20260103,H001,cardiac_center,cardiac,shortness of breath,89,female,99,62,82,6,red,10.00,17,Evening Peak,True,1,-0.5966203063087411
+EMS-100597,20260417,H003,level1_trauma_center,stroke,sudden confusion,89,female,80,41,97,8,red,10.00,2,Night,False,1,-0.5965076049265006
+EMS-100969,20260512,H002,stroke_center,trauma,vehicle collision trauma,13,female,72,41,99,15,red,5.63,10,Morning Peak,True,1,-0.5962985916603429
+EMS-113123,20260211,H003,level1_trauma_center,stroke,arm weakness,6,female,91,154,82,15,red,8.13,11,Morning Peak,True,1,-0.5962373029079072
+EMS-103544,20260404,H003,level1_trauma_center,trauma,motorcycle crash injury,10,male,88,42,91,6,red,10.00,12,Midday,False,1,-0.5961674370826626
+EMS-106732,20260507,H001,cardiac_center,trauma,severe bleeding,90,male,167,122,95,15,yellow,2.00,11,Morning Peak,True,1,-0.5961481398521534
+EMS-111765,20260314,H004,general_emergency,trauma,vehicle collision trauma,36,female,164,158,82,15,red,8.13,11,Morning Peak,True,1,-0.5961311519324646
+EMS-104723,20260310,H004,general_emergency,cardiac,palpitations,80,female,84,47,100,7,red,10.00,8,Morning Peak,True,1,-0.5961197985835235
+EMS-111857,20260311,H001,cardiac_center,cardiac,sweating with chest pressure,86,female,129,152,82,6,red,10.00,17,Evening Peak,True,1,-0.5958936407030079
+EMS-111983,20260512,H003,level1_trauma_center,stroke,slurred speech,25,male,179,42,100,14,yellow,3.50,16,Midday,False,1,-0.5957751877294312
+EMS-113714,20260126,H002,stroke_center,stroke,facial droop,81,female,133,160,83,6,red,10.00,13,Midday,False,1,-0.5955863518165673
+EMS-113634,20260509,H004,general_emergency,cardiac,crushing chest pain,2,male,92,45,96,6,red,8.75,8,Morning Peak,True,1,-0.5955513856199991
+EMS-119064,20260116,H001,cardiac_center,stroke,sudden confusion,50,male,177,43,82,15,red,8.13,8,Morning Peak,True,1,-0.5954485275836007
+EMS-107512,20260128,H002,stroke_center,trauma,motorcycle crash injury,19,female,168,149,100,6,red,8.75,19,Evening Peak,True,1,-0.5954092202152678
+EMS-115822,20260103,H003,level1_trauma_center,trauma,motorcycle crash injury,2,female,70,85,91,6,red,10.00,16,Midday,False,1,-0.5953522804916839
+EMS-105154,20260218,H003,level1_trauma_center,trauma,vehicle collision trauma,90,female,70,136,99,8,red,10.00,10,Morning Peak,True,1,-0.5953401037056901
+EMS-101819,20260223,H003,level1_trauma_center,trauma,multiple fractures,14,female,78,68,82,6,red,10.00,7,Early Morning,False,1,-0.595304383260975
+EMS-103530,20260121,H003,level1_trauma_center,trauma,vehicle collision trauma,3,female,94,160,95,15,yellow,3.50,8,Morning Peak,True,1,-0.5952226765014883
+EMS-114416,20260514,H002,stroke_center,cardiac,palpitations,59,male,179,128,100,15,yellow,2.00,11,Morning Peak,True,1,-0.5950998380511436
+EMS-105455,20260504,H004,general_emergency,trauma,multiple fractures,1,male,151,159,83,11,red,10.00,17,Evening Peak,True,1,-0.5950847443947385
+EMS-100848,20260117,H002,stroke_center,cardiac,crushing chest pain,4,male,73,95,82,15,red,7.50,23,Late Evening,False,1,-0.5949642398681921
+EMS-118944,20260127,H003,level1_trauma_center,trauma,vehicle collision trauma,15,male,97,52,100,15,yellow,2.00,12,Midday,False,1,-0.5949494914549988
+EMS-119033,20260130,H002,stroke_center,cardiac,crushing chest pain,22,female,171,160,86,6,red,10.00,6,Early Morning,False,1,-0.5948860361391661
+EMS-101259,20260427,H002,stroke_center,cardiac,sweating with chest pressure,1,female,166,45,84,12,red,10.00,12,Midday,False,1,-0.5947741202157008
+EMS-118136,20260316,H002,stroke_center,stroke,facial droop,81,female,80,154,100,7,red,10.00,5,Night,False,1,-0.5947724004351348
+EMS-106693,20260203,H002,stroke_center,cardiac,palpitations,86,female,90,55,82,6,red,10.00,23,Late Evening,False,1,-0.5947426114628837
+EMS-114043,20260318,H002,stroke_center,stroke,facial droop,55,female,84,43,99,6,red,10.00,13,Midday,False,1,-0.5945829841399568
+EMS-107758,20260419,H004,general_emergency,cardiac,shortness of breath,79,male,72,41,86,6,red,10.00,0,Night,False,1,-0.5945096330973887
+EMS-108101,20260203,H003,level1_trauma_center,stroke,vision disturbance,64,female,77,160,82,6,red,10.00,2,Night,False,1,-0.5943519746536937
+EMS-110841,20260109,H002,stroke_center,cardiac,sweating with chest pressure,79,male,175,45,100,15,yellow,3.50,17,Evening Peak,True,1,-0.5942245283784054
+EMS-115037,20260203,H004,general_emergency,trauma,fall from height,3,male,72,142,96,6,red,10.00,18,Evening Peak,True,1,-0.5940137797123617
+EMS-113717,20260515,H004,general_emergency,cardiac,crushing chest pain,2,male,76,157,91,15,red,7.50,1,Night,False,1,-0.5940083906578661
+EMS-101612,20260327,H004,general_emergency,cardiac,palpitations,6,male,81,156,83,14,red,9.38,11,Morning Peak,True,1,-0.5939430097230386
+EMS-115104,20260407,H002,stroke_center,stroke,vision disturbance,2,male,151,156,100,13,yellow,3.50,0,Night,False,1,-0.5937450730734524
+EMS-111174,20260420,H001,cardiac_center,trauma,fall from height,11,male,179,160,96,6,red,8.75,20,Evening Peak,True,1,-0.593631907037205
+EMS-103447,20260502,H001,cardiac_center,trauma,multiple fractures,1,female,116,43,99,7,red,8.75,5,Night,False,1,-0.593542864391525
+EMS-112374,20260312,H001,cardiac_center,stroke,sudden confusion,73,male,173,45,83,6,red,10.00,5,Night,False,1,-0.5935245450315266
+EMS-113399,20260119,H004,general_emergency,cardiac,crushing chest pain,88,male,164,67,100,14,yellow,2.00,7,Early Morning,False,1,-0.5935210566641425
+EMS-103262,20260217,H001,cardiac_center,stroke,slurred speech,25,female,88,40,99,7,red,10.00,22,Late Evening,False,1,-0.5934630049764616
+EMS-114920,20260421,H001,cardiac_center,trauma,multiple fractures,5,female,174,43,83,11,red,10.00,1,Night,False,1,-0.5931977439801583
+EMS-111059,20260512,H001,cardiac_center,cardiac,palpitations,51,male,178,40,83,15,red,8.13,14,Midday,False,1,-0.5931459487335358
+EMS-102931,20260401,H004,general_emergency,trauma,vehicle collision trauma,84,female,180,57,84,6,red,10.00,21,Late Evening,False,1,-0.5931208466572486
+EMS-108600,20260127,H001,cardiac_center,stroke,slurred speech,76,female,175,41,83,15,red,8.13,18,Evening Peak,True,1,-0.5931142794099341
+EMS-104795,20260301,H002,stroke_center,cardiac,crushing chest pain,85,male,71,55,84,6,red,10.00,2,Night,False,1,-0.5930016063116347
+EMS-108908,20260106,H001,cardiac_center,cardiac,radiating arm pain,80,female,142,159,82,15,red,8.13,15,Midday,False,1,-0.5929734644539489
+EMS-100215,20260507,H001,cardiac_center,trauma,vehicle collision trauma,3,female,110,48,91,6,red,10.00,20,Evening Peak,True,1,-0.5928950143418824
+EMS-116681,20260203,H001,cardiac_center,cardiac,palpitations,17,female,176,154,99,15,yellow,3.50,14,Midday,False,1,-0.5927720583968813
+EMS-104785,20260217,H002,stroke_center,stroke,facial droop,84,female,73,45,93,6,red,10.00,11,Morning Peak,True,1,-0.5927252507543022
+EMS-102068,20260120,H003,level1_trauma_center,trauma,vehicle collision trauma,2,male,87,135,100,15,red,5.63,19,Evening Peak,True,1,-0.5926618180265076
+EMS-105912,20260116,H004,general_emergency,cardiac,sweating with chest pressure,90,male,72,156,99,11,red,8.13,2,Night,False,1,-0.5926472977164243
+EMS-117249,20260113,H004,general_emergency,trauma,multiple fractures,1,male,91,152,96,14,yellow,3.50,3,Night,False,1,-0.5925923762774234
+EMS-102435,20260217,H001,cardiac_center,cardiac,palpitations,2,male,180,82,95,15,yellow,2.00,1,Night,False,1,-0.5925891606115827
+EMS-114285,20260421,H004,general_emergency,stroke,slurred speech,4,male,178,119,92,15,yellow,2.00,3,Night,False,1,-0.5925853492084531
+EMS-117378,20260201,H002,stroke_center,cardiac,shortness of breath,65,female,74,154,82,15,red,9.38,15,Midday,False,1,-0.5923664920190048
+EMS-101252,20260329,H002,stroke_center,stroke,facial droop,5,female,91,68,100,14,yellow,2.00,2,Night,False,1,-0.592223026285048
+EMS-107693,20260111,H001,cardiac_center,cardiac,crushing chest pain,1,male,80,133,82,12,red,10.00,11,Morning Peak,True,1,-0.5922167076896847
+EMS-108158,20260405,H001,cardiac_center,cardiac,palpitations,89,female,171,89,84,6,red,10.00,11,Morning Peak,True,1,-0.5921882621226076
+EMS-112207,20260425,H001,cardiac_center,stroke,slurred speech,6,male,72,146,96,6,red,10.00,12,Midday,False,1,-0.5920907425772866
+EMS-106836,20260413,H004,general_emergency,stroke,facial droop,1,female,168,96,100,13,yellow,2.00,16,Midday,False,1,-0.5920709028935931
+EMS-102771,20260416,H004,general_emergency,stroke,sudden confusion,4,male,91,119,95,15,yellow,2.00,16,Midday,False,1,-0.5919686022044388
+EMS-103852,20260517,H004,general_emergency,cardiac,radiating arm pain,89,male,140,159,82,14,red,8.13,7,Early Morning,False,1,-0.5918854162533947
+EMS-110132,20260327,H004,general_emergency,cardiac,crushing chest pain,1,female,86,82,82,12,red,10.00,7,Early Morning,False,1,-0.5918709761206702
+EMS-117715,20260108,H002,stroke_center,stroke,arm weakness,3,female,138,56,84,6,red,10.00,13,Midday,False,1,-0.5917965648665355
+EMS-107611,20260318,H004,general_emergency,stroke,arm weakness,5,female,100,124,100,15,yellow,2.00,12,Midday,False,1,-0.591786313477969
+EMS-112533,20260102,H004,general_emergency,cardiac,radiating arm pain,90,female,76,132,82,13,red,9.38,13,Midday,False,1,-0.5917724193928531
+EMS-119426,20260129,H002,stroke_center,trauma,motorcycle crash injury,9,male,71,151,84,6,red,10.00,12,Midday,False,1,-0.5917500098753404
+EMS-110918,20260428,H004,general_emergency,trauma,severe bleeding,40,male,74,140,100,6,red,10.00,23,Late Evening,False,1,-0.5917114817230541
+EMS-106532,20260406,H001,cardiac_center,cardiac,palpitations,26,male,165,50,82,6,red,10.00,23,Late Evening,False,1,-0.5916997565313677
+EMS-110120,20260125,H002,stroke_center,stroke,slurred speech,80,female,177,40,100,11,yellow,5.50,7,Early Morning,False,1,-0.5916498411079132
+EMS-103923,20260216,H004,general_emergency,stroke,slurred speech,1,female,86,107,84,6,red,10.00,16,Midday,False,1,-0.591518946331825
+EMS-116559,20260113,H002,stroke_center,stroke,slurred speech,74,male,70,146,82,14,red,9.38,22,Late Evening,False,1,-0.5914542219446077
+EMS-106457,20260325,H002,stroke_center,trauma,fall from height,89,male,178,120,94,13,yellow,2.00,1,Night,False,1,-0.5912425796694908
+EMS-112382,20260506,H004,general_emergency,trauma,motorcycle crash injury,28,female,178,100,99,15,yellow,2.00,9,Morning Peak,True,1,-0.5912289422024494
+EMS-103810,20260326,H001,cardiac_center,trauma,vehicle collision trauma,90,male,91,46,99,6,red,8.75,15,Midday,False,1,-0.5912226943780393
+EMS-109551,20260215,H002,stroke_center,cardiac,shortness of breath,1,male,132,69,100,15,yellow,2.00,9,Morning Peak,True,1,-0.5911750848485012
+EMS-102325,20260507,H003,level1_trauma_center,stroke,vision disturbance,11,female,113,45,100,6,red,8.75,1,Night,False,1,-0.5910978790879556
+EMS-113901,20260223,H003,level1_trauma_center,trauma,vehicle collision trauma,75,male,176,101,100,15,yellow,2.00,12,Midday,False,1,-0.5910069265639282
+EMS-105247,20260501,H001,cardiac_center,cardiac,radiating arm pain,26,female,180,100,99,15,yellow,2.00,0,Night,False,1,-0.5909851204554599
+EMS-105024,20260512,H003,level1_trauma_center,cardiac,shortness of breath,83,female,85,43,98,7,red,10.00,6,Early Morning,False,1,-0.5909748483324198
+EMS-101579,20260124,H003,level1_trauma_center,trauma,motorcycle crash injury,90,male,86,44,88,6,red,10.00,0,Night,False,1,-0.5909625297633261
+EMS-107713,20260130,H002,stroke_center,trauma,multiple fractures,14,male,177,48,83,15,red,8.13,1,Night,False,1,-0.5909461412191472

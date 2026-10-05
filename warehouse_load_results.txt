@@ -1,0 +1,14 @@
+warehouse.dim_date=9862
+warehouse.dim_hospital=741
+warehouse.dim_location=18
+warehouse.dim_road_segment=500
+warehouse.dim_time_of_day=1440
+warehouse.dim_weather_condition=16
+warehouse.fact_road_accidents=20000
+warehouse.fact_ems_events=20000
+warehouse.fact_daily_weather=91320
+warehouse.fact_traffic_performance=195714
+warehouse.vw_hourly_emergency_risk_profile=24
+warehouse.vw_emergency_hospital_readiness=741
+warehouse.vw_high_risk_route_corridors=500
+warehouse.vw_weather_accident_correlation=4

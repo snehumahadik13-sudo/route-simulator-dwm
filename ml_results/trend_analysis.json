@@ -1,0 +1,284 @@
+{
+  "peak_ems_hours": [
+    {
+      "hour_24": 0,
+      "ems_count": 827
+    },
+    {
+      "hour_24": 1,
+      "ems_count": 824
+    },
+    {
+      "hour_24": 2,
+      "ems_count": 863
+    },
+    {
+      "hour_24": 3,
+      "ems_count": 847
+    },
+    {
+      "hour_24": 4,
+      "ems_count": 809
+    },
+    {
+      "hour_24": 5,
+      "ems_count": 802
+    },
+    {
+      "hour_24": 6,
+      "ems_count": 848
+    },
+    {
+      "hour_24": 7,
+      "ems_count": 843
+    },
+    {
+      "hour_24": 8,
+      "ems_count": 861
+    },
+    {
+      "hour_24": 9,
+      "ems_count": 810
+    },
+    {
+      "hour_24": 10,
+      "ems_count": 859
+    },
+    {
+      "hour_24": 11,
+      "ems_count": 846
+    },
+    {
+      "hour_24": 12,
+      "ems_count": 845
+    },
+    {
+      "hour_24": 13,
+      "ems_count": 839
+    },
+    {
+      "hour_24": 14,
+      "ems_count": 814
+    },
+    {
+      "hour_24": 15,
+      "ems_count": 849
+    },
+    {
+      "hour_24": 16,
+      "ems_count": 852
+    },
+    {
+      "hour_24": 17,
+      "ems_count": 843
+    },
+    {
+      "hour_24": 18,
+      "ems_count": 807
+    },
+    {
+      "hour_24": 19,
+      "ems_count": 873
+    },
+    {
+      "hour_24": 20,
+      "ems_count": 904
+    },
+    {
+      "hour_24": 21,
+      "ems_count": 751
+    },
+    {
+      "hour_24": 22,
+      "ems_count": 776
+    },
+    {
+      "hour_24": 23,
+      "ems_count": 808
+    }
+  ],
+  "hourly_accidents": [
+    {
+      "hour_24": 0,
+      "accident_count": 840
+    },
+    {
+      "hour_24": 1,
+      "accident_count": 859
+    },
+    {
+      "hour_24": 2,
+      "accident_count": 888
+    },
+    {
+      "hour_24": 3,
+      "accident_count": 824
+    },
+    {
+      "hour_24": 4,
+      "accident_count": 805
+    },
+    {
+      "hour_24": 5,
+      "accident_count": 827
+    },
+    {
+      "hour_24": 6,
+      "accident_count": 856
+    },
+    {
+      "hour_24": 7,
+      "accident_count": 786
+    },
+    {
+      "hour_24": 8,
+      "accident_count": 849
+    },
+    {
+      "hour_24": 9,
+      "accident_count": 786
+    },
+    {
+      "hour_24": 10,
+      "accident_count": 789
+    },
+    {
+      "hour_24": 11,
+      "accident_count": 841
+    },
+    {
+      "hour_24": 12,
+      "accident_count": 866
+    },
+    {
+      "hour_24": 13,
+      "accident_count": 878
+    },
+    {
+      "hour_24": 14,
+      "accident_count": 838
+    },
+    {
+      "hour_24": 15,
+      "accident_count": 811
+    },
+    {
+      "hour_24": 16,
+      "accident_count": 787
+    },
+    {
+      "hour_24": 17,
+      "accident_count": 861
+    },
+    {
+      "hour_24": 18,
+      "accident_count": 823
+    },
+    {
+      "hour_24": 19,
+      "accident_count": 840
+    },
+    {
+      "hour_24": 20,
+      "accident_count": 838
+    },
+    {
+      "hour_24": 21,
+      "accident_count": 830
+    },
+    {
+      "hour_24": 22,
+      "accident_count": 853
+    },
+    {
+      "hour_24": 23,
+      "accident_count": 825
+    }
+  ],
+  "severity_distribution": {
+    "minor": 11025,
+    "major": 5988,
+    "fatal": 2987
+  },
+  "accidents_by_city": [
+    {
+      "city": "Chandigarh",
+      "count": 2577
+    },
+    {
+      "city": "Chennai",
+      "count": 2575
+    },
+    {
+      "city": "Kolkata",
+      "count": 2559
+    },
+    {
+      "city": "Pune",
+      "count": 2517
+    },
+    {
+      "city": "Mumbai",
+      "count": 2492
+    },
+    {
+      "city": "Bangalore",
+      "count": 2438
+    },
+    {
+      "city": "Delhi",
+      "count": 2433
+    },
+    {
+      "city": "Hyderabad",
+      "count": 2409
+    }
+  ],
+  "weather_accident_impact": [
+    {
+      "weather": "clear",
+      "accident_count": 6690,
+      "avg_risk": 0.23687593423019432,
+      "total_casualties": 11491
+    },
+    {
+      "weather": "rain",
+      "accident_count": 6677,
+      "avg_risk": 0.48814587389546205,
+      "total_casualties": 11636
+    },
+    {
+      "weather": "fog",
+      "accident_count": 6633,
+      "avg_risk": 0.5891225689733153,
+      "total_casualties": 11402
+    }
+  ],
+  "congestion_distribution": {
+    "Free-flow": 8901,
+    "Moderate": 8254,
+    "Heavy": 7280,
+    "Gridlock": 5565
+  },
+  "speed_distribution": {
+    "60-80": 8950,
+    "40-60": 8163,
+    "20-40": 7259,
+    "<20": 5628,
+    ">80": 0
+  },
+  "triage_distribution": {
+    "red": 13327,
+    "yellow": 6673
+  },
+  "condition_distribution": {
+    "cardiac": 6708,
+    "trauma": 6676,
+    "stroke": 6616
+  },
+  "urgency_stats": {
+    "mean": 6.485,
+    "median": 6.88,
+    "high_urgency_pct": 39.24
+  }
+}

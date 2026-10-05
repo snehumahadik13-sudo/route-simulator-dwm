@@ -1,0 +1,65 @@
+{
+  "k": 2,
+  "silhouette_score": 0.2383,
+  "davies_bouldin_score": 1.5153,
+  "features_used": [
+    "mean_speed",
+    "mean_density",
+    "mean_wait",
+    "mean_occupancy",
+    "mean_congestion",
+    "mean_incidents",
+    "mean_visibility",
+    "mean_rain"
+  ],
+  "clusters": {
+    "0": {
+      "mean_speed": 40.047,
+      "mean_density": 42.642,
+      "mean_wait": 41.651,
+      "mean_occupancy": 48.725,
+      "mean_congestion": 29.394,
+      "mean_incidents": 0.761,
+      "mean_visibility": 5.518,
+      "mean_rain": 3.645,
+      "segment_count": 191,
+      "segments_sample": [
+        "S001",
+        "S002",
+        "S003",
+        "S004",
+        "S005",
+        "S006",
+        "S008",
+        "S009",
+        "S012",
+        "S013"
+      ],
+      "label": "Moderate Traffic"
+    },
+    "1": {
+      "mean_speed": 40.155,
+      "mean_density": 42.464,
+      "mean_wait": 41.394,
+      "mean_occupancy": 48.579,
+      "mean_congestion": 29.131,
+      "mean_incidents": 0.758,
+      "mean_visibility": 5.534,
+      "mean_rain": 3.627,
+      "segment_count": 309,
+      "segments_sample": [
+        "S007",
+        "S010",
+        "S011",
+        "S016",
+        "S017",
+        "S022",
+        "S026",
+        "S027",
+        "S028",
+        "S029"
+      ],
+      "label": "Moderate Traffic"
+    }
+  }
+}
