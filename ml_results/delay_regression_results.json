@@ -1,0 +1,186 @@
+{
+  "status": "success",
+  "target_variable": "delay_minutes (Emergency Wait & Corridor Delay)",
+  "training_records": 40000,
+  "testing_records": 10000,
+  "features": [
+    "avg_speed_kmph",
+    "density_veh_per_km",
+    "occupancy_pct",
+    "flow_veh_per_hr",
+    "queue_length_veh",
+    "congestion_pressure",
+    "incident_num",
+    "temp_c",
+    "visibility_km",
+    "rain_intensity_mmph",
+    "hour_24",
+    "is_weekend"
+  ],
+  "feature_count": 12,
+  "col_medians": {
+    "avg_speed_kmph": 43.68,
+    "density_veh_per_km": 31.92,
+    "occupancy_pct": 41.63,
+    "flow_veh_per_hr": 1474.1950000000002,
+    "queue_length_veh": 11.02,
+    "congestion_pressure": 6.67125,
+    "incident_num": 0.533,
+    "temp_c": 26.72,
+    "visibility_km": 5.75,
+    "rain_intensity_mmph": 2.26,
+    "hour_24": 9.0,
+    "is_weekend": 0.0
+  },
+  "models": {
+    "Random Forest Regressor": {
+      "model_key": "random_forest",
+      "name": "Random Forest Regressor",
+      "mae": 0.0011,
+      "rmse": 0.0028,
+      "r2": 1.0,
+      "accuracy_within_5_min": 100.0,
+      "feature_importances": {
+        "avg_speed_kmph": 0.0964,
+        "density_veh_per_km": 0.0282,
+        "occupancy_pct": 0.1359,
+        "flow_veh_per_hr": 0.2514,
+        "queue_length_veh": 0.0697,
+        "congestion_pressure": 0.104,
+        "incident_num": 0.1557,
+        "temp_c": 0.0,
+        "visibility_km": 0.0838,
+        "rain_intensity_mmph": 0.0748,
+        "hour_24": 0.0,
+        "is_weekend": 0.0
+      },
+      "rank": 1
+    },
+    "Decision Tree Regressor": {
+      "model_key": "decision_tree",
+      "name": "Decision Tree Regressor",
+      "mae": 0.0098,
+      "rmse": 0.0127,
+      "r2": 0.9997,
+      "accuracy_within_5_min": 100.0,
+      "feature_importances": {
+        "avg_speed_kmph": 0.0,
+        "density_veh_per_km": 0.0015,
+        "occupancy_pct": 0.0,
+        "flow_veh_per_hr": 0.0,
+        "queue_length_veh": 0.0,
+        "congestion_pressure": 0.0232,
+        "incident_num": 0.9753,
+        "temp_c": 0.0,
+        "visibility_km": 0.0,
+        "rain_intensity_mmph": 0.0,
+        "hour_24": 0.0,
+        "is_weekend": 0.0
+      },
+      "rank": 3
+    },
+    "XGBoost Regressor": {
+      "model_key": "xgboost",
+      "name": "XGBoost Regressor",
+      "mae": 0.0025,
+      "rmse": 0.004,
+      "r2": 1.0,
+      "accuracy_within_5_min": 100.0,
+      "feature_importances": {
+        "avg_speed_kmph": 0.1939,
+        "density_veh_per_km": 0.0162,
+        "occupancy_pct": 0.0655,
+        "flow_veh_per_hr": 0.1614,
+        "queue_length_veh": 0.1855,
+        "congestion_pressure": 0.3095,
+        "incident_num": 0.0521,
+        "temp_c": 0.0,
+        "visibility_km": 0.0158,
+        "rain_intensity_mmph": 0.0,
+        "hour_24": 0.0,
+        "is_weekend": 0.0
+      },
+      "rank": 2
+    }
+  },
+  "comparison_table": [
+    {
+      "model_key": "random_forest",
+      "name": "Random Forest Regressor",
+      "mae": 0.0011,
+      "rmse": 0.0028,
+      "r2": 1.0,
+      "accuracy_within_5_min": 100.0,
+      "feature_importances": {
+        "avg_speed_kmph": 0.0964,
+        "density_veh_per_km": 0.0282,
+        "occupancy_pct": 0.1359,
+        "flow_veh_per_hr": 0.2514,
+        "queue_length_veh": 0.0697,
+        "congestion_pressure": 0.104,
+        "incident_num": 0.1557,
+        "temp_c": 0.0,
+        "visibility_km": 0.0838,
+        "rain_intensity_mmph": 0.0748,
+        "hour_24": 0.0,
+        "is_weekend": 0.0
+      },
+      "rank": 1
+    },
+    {
+      "model_key": "xgboost",
+      "name": "XGBoost Regressor",
+      "mae": 0.0025,
+      "rmse": 0.004,
+      "r2": 1.0,
+      "accuracy_within_5_min": 100.0,
+      "feature_importances": {
+        "avg_speed_kmph": 0.1939,
+        "density_veh_per_km": 0.0162,
+        "occupancy_pct": 0.0655,
+        "flow_veh_per_hr": 0.1614,
+        "queue_length_veh": 0.1855,
+        "congestion_pressure": 0.3095,
+        "incident_num": 0.0521,
+        "temp_c": 0.0,
+        "visibility_km": 0.0158,
+        "rain_intensity_mmph": 0.0,
+        "hour_24": 0.0,
+        "is_weekend": 0.0
+      },
+      "rank": 2
+    },
+    {
+      "model_key": "decision_tree",
+      "name": "Decision Tree Regressor",
+      "mae": 0.0098,
+      "rmse": 0.0127,
+      "r2": 0.9997,
+      "accuracy_within_5_min": 100.0,
+      "feature_importances": {
+        "avg_speed_kmph": 0.0,
+        "density_veh_per_km": 0.0015,
+        "occupancy_pct": 0.0,
+        "flow_veh_per_hr": 0.0,
+        "queue_length_veh": 0.0,
+        "congestion_pressure": 0.0232,
+        "incident_num": 0.9753,
+        "temp_c": 0.0,
+        "visibility_km": 0.0,
+        "rain_intensity_mmph": 0.0,
+        "hour_24": 0.0,
+        "is_weekend": 0.0
+      },
+      "rank": 3
+    }
+  ],
+  "best_model": "Random Forest Regressor",
+  "best_model_key": "random_forest",
+  "best_model_metrics": {
+    "mae": 0.0011,
+    "rmse": 0.0028,
+    "r2": 1.0,
+    "accuracy_within_5_min": 100.0
+  },
+  "selection_reason": "Based on actual test-set performance (10,000 held-out samples), Random Forest Regressor achieved the lowest MAE (0.0011 min) and lowest RMSE (0.0028 min) with an R\u00b2 of 1.0000."
+}

@@ -9,6 +9,10 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+
 # ── Patch exec so we can import app without starting the server ──────────────
 import app as flask_app
 
@@ -20,6 +24,7 @@ class DecimalEncoder(json.JSONEncoder):
         return super().default(o)
 
 client = flask_app.app.test_client()
+client.post('/admin-login', json={"email": "admin@emergency-route.in", "password": "admin"})
 
 PASS = "✅"
 FAIL = "❌"

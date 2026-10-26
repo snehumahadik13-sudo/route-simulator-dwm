@@ -22,3 +22,15 @@ Thumbs.db
 venv/
 .venv/
 env/
+
+powershell.bat
+
+# Database files & temporary caches
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Test outputs
+test_results.txt

@@ -66,13 +66,22 @@ def main():
     # 6. Random Forest — Delay Risk Classification (traffic telemetry)
     #    Distinct from step 4 (classification.py = accident_severity)
     try:
-        print("\n[6/6] Running Random Forest Delay Risk Classification...")
+        print("\n[6/7] Running Random Forest Delay Risk Classification...")
         print("  (Target: delay_risk DERIVED from congestion_label / wait_time)")
         from ml.random_forest_delay import run_random_forest_delay
         all_results["random_forest_delay"] = run_random_forest_delay()
     except Exception as e:
         print(f"  ERROR in random_forest_delay: {e}")
         errors.append(f"random_forest_delay: {e}")
+
+    # 7. ML Analysis: 3 Regression Models for Delay Prediction
+    try:
+        print("\n[7/7] Running Delay Regression (Random Forest, Decision Tree, XGBoost)...")
+        from ml.delay_regression import train_and_evaluate_models
+        all_results["delay_regression"] = train_and_evaluate_models()
+    except Exception as e:
+        print(f"  ERROR in delay_regression: {e}")
+        errors.append(f"delay_regression: {e}")
 
     # Final summary
     print("\n" + "="*65)
